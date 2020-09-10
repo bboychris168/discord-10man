@@ -76,7 +76,7 @@ class Setup(commands.Cog):
 
     @commands.command(help='This command connects users steam account to the bot.',
                       brief='Connect your SteamID to the bot', usage='<SteamID or CommunityURL>')
-    async def link(self, ctx, steamID_input):
+    async def login(self, ctx, steamID_input):
         steamID = SteamID(steamID_input)
         if not steamID.is_valid():
             steamID = from_url(steamID_input, http_timeout=15)
@@ -94,10 +94,11 @@ class Setup(commands.Cog):
         cursor.close()
         await ctx.send(f'Connected {steamID.community_url}')
 
-    @link.error
-    async def link_error(self, ctx, error):
+    @login.error
+    async def login_error(self, ctx, error):
         if isinstance(error, commands.UserInputError):
-            await ctx.send(error)
+            #await ctx.send(error)
+            await ctx.send('```!login <Steam Profile URL> or <SteamID>```')
         traceback.print_exc(error)
 
     @commands.command(help='Command to send a test message to the server to verify that RCON is working.',

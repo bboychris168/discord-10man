@@ -6,16 +6,12 @@ import json
 startup_extensions = ["setup", "csgo"]
 
 # TODO: Change prefix to . when syncing
-bot = commands.Bot(command_prefix='.', case_insensitive=True, description='A bot to run CSGO PUGS.')
+bot = commands.Bot(command_prefix='!', case_insensitive=True, description='A bot to run CSGO PUGS.')
 bot_secret: str
 
 server_address: (str, int)
 server_password: str
 RCON_password: str
-
-# TODO: Refactor this, probably bad code but works rn
-team1_channel: discord.VoiceChannel = None
-team2_channel: discord.VoiceChannel = None
 
 # Loading JSON config file
 with open('config.json') as config:

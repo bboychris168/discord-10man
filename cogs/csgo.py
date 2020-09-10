@@ -32,8 +32,8 @@ class CSGO(commands.Cog):
     async def pug(self, ctx):
         if not ctx.author.voice or not ctx.author.voice.channel:
             raise commands.UserInputError(message='You must be in a voice channel.')
-        if len(ctx.author.voice.channel.members) < 10:
-            raise commands.CommandError(message='There must be 10 members connected to the voice channel')
+        """ if len(ctx.author.voice.channel.members) < 10:
+            raise commands.CommandError(message='There must be 10 members connected to the voice channel') """
         db = sqlite3.connect('./main.sqlite')
         cursor = db.cursor()
         not_connected_members = []
@@ -46,13 +46,13 @@ class CSGO(commands.Cog):
             error_message = ''
             for member in not_connected_members:
                 error_message += f'<@{member.id}> '
-            error_message += 'must connect their steam account with the command ```.connect <Steam Profile URL>```'
+            error_message += 'must connect their steam account with the command ```!login <Steam Profile URL> or <SteamID>```'
             raise commands.UserInputError(message=error_message)
 
         # TODO: Refactor this mess
         # TODO: Add a way to cancel
-        players = ctx.author.voice.channel.members.copy()
-        # players = [ctx.author] * 10
+        #players = ctx.author.voice.channel.members.copy()
+        players = [ctx.author] * 10
         emojis = emoji_bank.copy()
         del emojis[len(players) - 2:len(emojis)]
         emojis_selected = []
