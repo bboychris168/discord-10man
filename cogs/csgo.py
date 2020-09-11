@@ -69,7 +69,7 @@ class CSGO(commands.Cog):
 
         current_captain = team1_captain
         player_veto_count = 0
-
+        
         message = await ctx.send('10 man time')
 
         while len(players) > 0:
