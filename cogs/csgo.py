@@ -24,7 +24,7 @@ class CSGO(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=['10man', 'setup'],
+    @commands.command(aliases=['10man', 'setup', 'start'],
                       help='This command takes the users in a voice channel and selects two random '
                            'captains. It then allows those captains to select the members of their '
                            'team in a 1 2 2 2 2 1 fashion. It then configures the server with the '
