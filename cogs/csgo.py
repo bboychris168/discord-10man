@@ -9,6 +9,7 @@ import traceback
 import json
 import bot
 
+
 # TODO: Allow administrators to update the maplist
 active_map_pool = ['de_inferno', 'de_train', 'de_mirage', 'de_nuke', 'de_overpass', 'de_dust2', 'de_vertigo']
 reserve_map_pool = ['de_cache', 'de_cbble', 'cs_office', 'cs_agency']
@@ -24,7 +25,7 @@ class CSGO(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=['10man', 'setup', 'start'],
+    @commands.command(aliases=['10man', 'setup','start'],
                       help='This command takes the users in a voice channel and selects two random '
                            'captains. It then allows those captains to select the members of their '
                            'team in a 1 2 2 2 2 1 fashion. It then configures the server with the '
@@ -32,8 +33,8 @@ class CSGO(commands.Cog):
     async def pug(self, ctx):
         if not ctx.author.voice or not ctx.author.voice.channel:
             raise commands.UserInputError(message='You must be in a voice channel.')
-        """ if len(ctx.author.voice.channel.members) < 10:
-            raise commands.CommandError(message='There must be 10 members connected to the voice channel') """
+        if len(ctx.author.voice.channel.members) < 10:
+            raise commands.CommandError(message='There must be 10 members connected to the voice channel')
         db = sqlite3.connect('./main.sqlite')
         cursor = db.cursor()
         not_connected_members = []
@@ -51,8 +52,8 @@ class CSGO(commands.Cog):
 
         # TODO: Refactor this mess
         # TODO: Add a way to cancel
-        #players = ctx.author.voice.channel.members.copy()
-        players = [ctx.author] * 10
+        players = ctx.author.voice.channel.members.copy()
+        # players = [ctx.author] * 10
         emojis = emoji_bank.copy()
         del emojis[len(players) - 2:len(emojis)]
         emojis_selected = []
@@ -69,7 +70,7 @@ class CSGO(commands.Cog):
 
         current_captain = team1_captain
         player_veto_count = 0
-        
+
         message = await ctx.send('10 man time')
 
         while len(players) > 0:
@@ -145,13 +146,13 @@ class CSGO(commands.Cog):
                                                                                      user_limit=5)
 
         for player in team1:
-            player.move_to(channel=team1_channel, reason=f'You are on {team1_captain}\'s Team')
+            await player.move_to(channel=team1_channel, reason=f'You are on {team1_captain}\'s Team')
             cursor.execute('SELECT steam_id FROM users WHERE discord_id = ?', (str(player),))
             data = cursor.fetchone()
             team1_steamIDs.append(data[0])
 
         for player in team2:
-            player.move_to(channel=team2_channel, reason=f'You are on {team2_captain}\'s Team')
+            await player.move_to(channel=team2_channel, reason=f'You are on {team2_captain}\'s Team')
             cursor.execute('SELECT steam_id FROM users WHERE discord_id = ?', (str(player),))
             data = cursor.fetchone()
             team2_steamIDs.append(data[0])
@@ -192,7 +193,7 @@ class CSGO(commands.Cog):
 
         match_config_json = await ctx.send(file=discord.File('match_config.json', '../match_config.json'))
         await asyncio.sleep(0.3)
-        await ctx.send(f'steam://connect/{bot.server_address[0]}:{bot.server_address[1]}/{bot.server_password}')
+        await self.connect(ctx)
         await ctx.send('If you are coaching, once you join the server, type .coach')
 
         print(match_config_json.attachments[0].url)
