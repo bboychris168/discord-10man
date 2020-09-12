@@ -9,6 +9,7 @@ startup_extensions = ["setup", "csgo"]
 bot = commands.Bot(command_prefix='!', case_insensitive=True, description='A bot to run CSGO PUGS.')
 bot_secret: str
 
+# TODO: Refactor these variables to pass through into the init of the cog instead of importing the file
 server_address: (str, int)
 server_password: str
 RCON_password: str
@@ -49,6 +50,7 @@ async def load(ctx, extension):
 @bot.command()
 async def unload(ctx, extension):
     bot.unload_extension(f'cogs.{extension}')
+
 
 for extension in startup_extensions:
     bot.load_extension(f'cogs.{extension}')
