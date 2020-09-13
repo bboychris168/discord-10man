@@ -70,7 +70,7 @@ class CSGO(commands.Cog):
         current_captain = team1_captain
         player_veto_count = 0
 
-        message = await ctx.send('10 man time\nLoading player selection...')
+        message = await ctx.send('***```Loading player selection...```***')
         for emoji in emojis:
             await message.add_reaction(emoji)
 
@@ -85,7 +85,7 @@ class CSGO(commands.Cog):
                 message_text += f'<@{team2_captain.id}>'
                 current_captain = team2_captain
 
-            message_text += f' `select` ***{player_veto[player_veto_count]}***\n'
+            message_text += f' ***`select {player_veto[player_veto_count]} player`***\n'
             message_text += 'You have 30 seconds to choose your player(s)\n'
 
             i = 0
