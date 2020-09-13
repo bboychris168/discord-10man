@@ -85,8 +85,8 @@ class CSGO(commands.Cog):
                 message_text += f'<@{team2_captain.id}>'
                 current_captain = team2_captain
 
-            message_text += f' select {player_veto[player_veto_count]}\n'
-            message_text += 'You have 60 seconds to choose your player(s)\n'
+            message_text += f' `select` ***{player_veto[player_veto_count]}***\n'
+            message_text += 'You have 30 seconds to choose your player(s)\n'
 
             i = 0
             for player in players:
@@ -118,7 +118,7 @@ class CSGO(commands.Cog):
 
                 seconds += 1
 
-                if seconds % 60 == 0:
+                if seconds % 30 == 0:
                     for x in range(0, player_veto[player_veto_count]):
                         index = randint(0, len(players) - 1)
                         if current_team_player_select == 1:
@@ -231,7 +231,7 @@ class CSGO(commands.Cog):
                 team2_text += ' 👑'
             team2_text += '\n'
 
-        embed = discord.Embed()
+        embed = discord.Embed(color=0x03f0fc)
         embed.add_field(name=f'Team {team1_captain.display_name}', value=team1_text, inline=True)
         embed.add_field(name='Players', value=players_text, inline=True)
         embed.add_field(name=f'Team {team2_captain.display_name}', value=team2_text, inline=True)
