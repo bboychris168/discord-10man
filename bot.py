@@ -3,7 +3,7 @@ from discord.ext import commands
 import sqlite3
 import json
 
-startup_extensions = ["setup", "csgo", "csgo"]
+startup_extensions = ["setup", "csgo",]
 
 # TODO: Change prefix to . when syncing
 bot = commands.Bot(command_prefix='!', case_insensitive=True, description='A bot to run CSGO PUGS.')
