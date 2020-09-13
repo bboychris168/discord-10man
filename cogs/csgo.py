@@ -183,7 +183,7 @@ class CSGO(commands.Cog):
             'team2': {
                 'name': f'{team2_captain}\'s Team',
                 'tag': 'team2',
-                'flag': 'US',
+                'flag': 'AU',
                 'players': team2_steamIDs
             }
         }
