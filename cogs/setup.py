@@ -114,6 +114,11 @@ class Setup(commands.Cog):
             await ctx.send('Please specify an amount of messages to delete')
         traceback.print_exc(error)
 
+    @commands.command(hidden=True)
+    async def rank(self, ctx):
+        # TODO use kento rankme plugin website for stats
+        await ctx.channel.send('```website```')
+
 
 def setup(client):
     client.add_cog(Setup(client))
