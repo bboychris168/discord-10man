@@ -246,7 +246,7 @@ class CSGO(commands.Cog):
                         value=f'steam://connect/{bot.server_address[0]}:{bot.server_address[1]}/{bot.server_password}',
                         inline=False)
         embed.add_field(name='Console Connect',
-                        value=f'connect {bot.server_address[0]}:{bot.server_address[1]}; password {bot.server_password}',
+                        value=f'```connect {bot.server_address[0]}:{bot.server_address[1]}; password {bot.server_password}```',
                         inline=False)
         embed.add_field(name='Players', value=f'{info["player_count"]}/{info["max_players"]}', inline=True)
         embed.add_field(name='Map', value=info['map'], inline=True)
