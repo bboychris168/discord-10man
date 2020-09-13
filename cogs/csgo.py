@@ -140,17 +140,10 @@ class CSGO(commands.Cog):
         team1_steamIDs = []
         team2_steamIDs = []
 
-<<<<<<< HEAD
         team1_channel = await ctx.author.voice.channel.category.create_voice_channel(name=f'Team {team1_captain}',
                                                                                      user_limit=5)
         team2_channel = await ctx.author.voice.channel.category.create_voice_channel(name=f'Team {team2_captain}',
                                                                                      user_limit=5)
-=======
-        team1_channel = await ctx.author.voice.channel.category.create_voice_channel(name=f'{team1_captain}\'s Team',
-                                                                                     user_limit=7)
-        team2_channel = await ctx.author.voice.channel.category.create_voice_channel(name=f'{team2_captain}\'s Team',
-                                                                                     user_limit=7)
->>>>>>> a13d4b18e0bc91aba7a11230dd311dc51f0db107
 
         for player in team1:
             await player.move_to(channel=team1_channel, reason=f'You are on {team1_captain}\'s Team')
