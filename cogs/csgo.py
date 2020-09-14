@@ -33,8 +33,8 @@ class CSGO(commands.Cog):
     async def pug(self, ctx):
         if not ctx.author.voice or not ctx.author.voice.channel:
             raise commands.UserInputError(message='You must be in a voice channel.')
-        """ if len(ctx.author.voice.channel.members) < 10:
-            raise commands.CommandError(message='There must be 10 members connected to the voice channel') """
+        if len(ctx.author.voice.channel.members) < 10:
+            raise commands.CommandError(message='There must be 10 members connected to the voice channel')
         db = sqlite3.connect('./main.sqlite')
         cursor = db.cursor()
         not_connected_members = []
@@ -52,8 +52,8 @@ class CSGO(commands.Cog):
 
         # TODO: Refactor this mess
         # TODO: Add a way to cancel
-        #players = ctx.author.voice.channel.members.copy()
-        players = [ctx.author] * 10
+        players = ctx.author.voice.channel.members.copy()
+        #players = [ctx.author] * 10
         emojis = emoji_bank.copy()
         del emojis[len(players) - 2:len(emojis)]
         emojis_selected = []
@@ -199,7 +199,7 @@ class CSGO(commands.Cog):
             json.dump(match_config, outfile, ensure_ascii=False, indent=4)
 
         match_config_json = await ctx.send(file=discord.File('match_config.json', '../match_config.json'))
-        await ctx.send('If you are coaching, once you join the server, type .coach')
+        #await ctx.send('If you are coaching, once you join the server, type .coach')
         await asyncio.sleep(0.3)
         valve.rcon.execute(bot.server_address, bot.RCON_password, 'exec triggers/get5')
         await self.connect(ctx)
