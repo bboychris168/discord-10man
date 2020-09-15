@@ -66,7 +66,7 @@ class Setup(commands.Cog):
                         ''', (str(ctx.author), str(steamID.as_steam2_zero),))
         db.commit()
         cursor.close()
-        await ctx.send(f'Connected {steamID.community_url}')
+        await ctx.send(f'**Connected** {steamID.community_url}')
 
     @login.error
     async def login_error(self, ctx, error):

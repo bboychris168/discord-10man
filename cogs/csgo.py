@@ -183,7 +183,7 @@ class CSGO(commands.Cog):
             'veto_first': 'team1',
             'side_type': 'always_knife',
             'players_per_team': len(team2),
-            'min_players_to_ready': 0,
+            'min_players_to_ready': 1,
             'team1': {
                 'name': f'Team {team1_captain.display_name}',
                 'tag': f'Team {team1_captain.display_name}',
