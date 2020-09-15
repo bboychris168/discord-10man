@@ -25,7 +25,7 @@ class CSGO(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=['10man', 'setup','start'],
+    @commands.command(aliases=['10man', 'setup','start','ready'],
                       help='This command takes the users in a voice channel and selects two random '
                            'captains. It then allows those captains to select the members of their '
                            'team in a 1 2 2 2 2 1 fashion. It then configures the server with the '
@@ -33,11 +33,12 @@ class CSGO(commands.Cog):
     async def pug(self, ctx):
         if not ctx.author.voice or not ctx.author.voice.channel:
             raise commands.UserInputError(message='You must be in a voice channel.')
-        if len(ctx.author.voice.channel.members) < 10:
-            raise commands.CommandError(message='There must be 10 members connected to the voice channel')
+        """ if len(ctx.author.voice.channel.members) < 10:
+            raise commands.CommandError(message='There must be 10 members connected to the voice channel') """
         db = sqlite3.connect('./main.sqlite')
         cursor = db.cursor()
         not_connected_members = []
+        await ctx.channel.purge(limit=100)
         for member in ctx.author.voice.channel.members:
             cursor.execute('SELECT 1 FROM users WHERE discord_id = ?', (str(member),))
             data = cursor.fetchone()
@@ -52,8 +53,8 @@ class CSGO(commands.Cog):
 
         # TODO: Refactor this mess
         # TODO: Add a way to cancel
-        players = ctx.author.voice.channel.members.copy()
-        #players = [ctx.author] * 10
+        #players = ctx.author.voice.channel.members.copy()
+        players = [ctx.author] * 10
         emojis = emoji_bank.copy()
         del emojis[len(players) - 2:len(emojis)]
         emojis_selected = []
@@ -170,7 +171,7 @@ class CSGO(commands.Cog):
         for cs_map in current_map_pool:
             maps_string += f'{cs_map}, '
 
-        await ctx.send(maps_string[:-2])
+        #await ctx.send(maps_string[:-2])
 
         match_config = {
             'matchid': f'PUG {date.today().strftime("%d-%B-%Y")}',
@@ -182,14 +183,14 @@ class CSGO(commands.Cog):
             'players_per_team': len(team2),
             'min_players_to_ready': 1,
             'team1': {
-                'name': f'team {team1_captain.display_name}',
-                'tag': 'team1',
+                'name': f'Team {team1_captain.display_name}',
+                'tag': f'Team {team1_captain.display_name}',
                 'flag': 'AU',
                 'players': team1_steamIDs
             },
             'team2': {
-                'name': f'team {team2_captain.display_name}',
-                'tag': 'team2',
+                'name': f'Team {team2_captain.display_name}',
+                'tag': f'Team {team2_captain.display_name}',
                 'flag': 'AU',
                 'players': team2_steamIDs
             }
@@ -242,10 +243,10 @@ class CSGO(commands.Cog):
             info = server.info()
         embed = discord.Embed(title=info['server_name'], color=0xf4c14e)
         embed.set_thumbnail(url="https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/730/69f7ebe2735c366c65c0b33dae00e12dc40edbe4.jpg")
-        embed.add_field(name='Quick Connect',
+        embed.add_field(name='__**📡Quick Connect**__',
                         value=f'steam://connect/{bot.server_address[0]}:{bot.server_address[1]}/{bot.server_password}',
                         inline=False)
-        embed.add_field(name='Console Connect',
+        embed.add_field(name='__**📡Console Connect**__',
                         value=f'```connect {bot.server_address[0]}:{bot.server_address[1]}; password {bot.server_password}```',
                         inline=False)
         embed.add_field(name='Players', value=f'{info["player_count"]}/{info["max_players"]}', inline=True)
