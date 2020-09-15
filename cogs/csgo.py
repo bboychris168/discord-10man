@@ -183,7 +183,7 @@ class CSGO(commands.Cog):
             'veto_first': 'team1',
             'side_type': 'always_knife',
             'players_per_team': len(team2),
-            'min_players_to_ready': 1,
+            'min_players_to_ready': 0,
             'team1': {
                 'name': f'Team {team1_captain.display_name}',
                 'tag': f'Team {team1_captain.display_name}',
@@ -251,6 +251,7 @@ class CSGO(commands.Cog):
         embed.add_field(name='__**📡Console Connect**__',
                         value=f'```connect {bot.server_address[0]}:{bot.server_address[1]}; password {bot.server_password}```',
                         inline=False)
+        #embed.add_field(name='**📺GOTV:**')
         embed.add_field(name='Players', value=f'{info["player_count"]}/{info["max_players"]}', inline=True)
         embed.add_field(name='Map', value=info['map'], inline=True)
         await ctx.send(embed=embed)
