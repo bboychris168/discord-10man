@@ -38,7 +38,9 @@ class CSGO(commands.Cog):
         db = sqlite3.connect('./main.sqlite')
         cursor = db.cursor()
         not_connected_members = []
+
         await ctx.channel.purge(limit=100)
+        
         for member in ctx.author.voice.channel.members:
             cursor.execute('SELECT 1 FROM users WHERE discord_id = ?', (str(member),))
             data = cursor.fetchone()
@@ -72,7 +74,7 @@ class CSGO(commands.Cog):
         current_captain = team1_captain
         player_veto_count = 0
 
-        message = await ctx.send('***```Loading player selection...```***')
+        message = await ctx.send('**```Loading player selection...```**')
         for emoji in emojis:
             await message.add_reaction(emoji)
 
@@ -87,7 +89,7 @@ class CSGO(commands.Cog):
                 message_text += f'<@{team2_captain.id}>'
                 current_captain = team2_captain
 
-            message_text += f' ***`select {player_veto[player_veto_count]} player`***\n'
+            message_text += f' **`select {player_veto[player_veto_count]} player(s)`**\n'
             message_text += 'You have 30 seconds to choose your player(s)\n'
 
             i = 0
