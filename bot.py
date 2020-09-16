@@ -41,7 +41,7 @@ async def on_ready():
                                                                                     state='Waiting', details='Waiting',
                                                                                     name='CSGO Pug'))
     global server_address, server_password, RCON_password
-    if bot.user.id == 745000319942918303:
+    if bot.user.id == 572166692545888288:
         bot.dev = True
 
     bot.web_server = WebServer(bot=bot)

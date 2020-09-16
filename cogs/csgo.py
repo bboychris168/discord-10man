@@ -61,9 +61,9 @@ class CSGO(commands.Cog):
         # TODO: Refactor this mess
         # TODO: Add a way to cancel
         channel_original = ctx.author.voice.channel
-        #players = ctx.author.voice.channel.members.copy()
-        #if self.bot.dev:
-        players = [ctx.author] * 10
+        players = ctx.author.voice.channel.members.copy()
+        if self.bot.dev:
+            players = [ctx.author] * 10
         emojis = emoji_bank.copy()
         del emojis[len(players) - 2:len(emojis)]
         emojis_selected = []
@@ -201,7 +201,7 @@ class CSGO(commands.Cog):
                 'players': team2_steamIDs
             },
             'cvars': {
-                'get5_web_api_url': f'http://{self.bot.web_server.IP}:{self.bot.web_server.port}/',
+                'get5_web_api_url': f'http://101.114.142.193:{self.bot.web_server.port}/',
                 'get5_web_api_key': 'ABC'
             }
         }
