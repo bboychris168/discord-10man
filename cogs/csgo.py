@@ -15,7 +15,7 @@ from random import randint
 from utils.veto_image import VetoImage
 
 # TODO: Allow administrators to update the maplist
-active_map_pool = ['de_inferno', 'de_train', 'de_mirage', 'de_nuke', 'de_overpass', 'de_dust2', 'de_vertigo']
+active_map_pool = ['de_inferno', 'de_train', 'de_mirage', 'de_nuke', 'de_overpass', 'de_dust2', 'de_vertigo', 'de_cache']
 reserve_map_pool = ['de_cache', 'de_cbble', 'cs_office', 'cs_agency']
 current_map_pool = active_map_pool.copy()
 
@@ -39,7 +39,7 @@ class CSGO(commands.Cog):
         if not ctx.author.voice or not ctx.author.voice.channel:
             raise commands.UserInputError(message='You must be in a voice channel.')
         """ if len(ctx.author.voice.channel.members) < 10:
-            raise commands.CommandError(message='There must be 10 members connected to the voice channel') """
+            raise commands.CommandError(message='```There must be 10 members connected to the voice channel```') """
         db = sqlite3.connect('./main.sqlite')
         cursor = db.cursor()
         not_connected_members = []
@@ -61,9 +61,9 @@ class CSGO(commands.Cog):
         # TODO: Refactor this mess
         # TODO: Add a way to cancel
         channel_original = ctx.author.voice.channel
-        players = ctx.author.voice.channel.members.copy()
-        if self.bot.dev:
-            players = [ctx.author] * 10
+        #players = ctx.author.voice.channel.members.copy()
+        #if self.bot.dev:
+        players = [ctx.author] * 10
         emojis = emoji_bank.copy()
         del emojis[len(players) - 2:len(emojis)]
         emojis_selected = []
@@ -284,7 +284,7 @@ class CSGO(commands.Cog):
             img_message = await temp_channel.send(file=attachment)
 
             embed = discord.Embed(title='__Map veto__',
-                                  color=discord.Colour(0x650309))
+                                  color=discord.Colour(0x03f0fc))
             embed.set_image(url=img_message.attachments[0].url)
             embed.set_footer(text=f'It is now {current_team_captain}\'s turn to veto',
                              icon_url=current_team_captain.avatar_url)
@@ -339,7 +339,7 @@ class CSGO(commands.Cog):
             image_message = await temp_channel.send(file=attachment)
             chosen_map_image_url = image_message.attachments[0].url
             map_chosen_embed = discord.Embed(title=f'The chosen map is ```{chosen_map}```',
-                                             color=discord.Colour(0x650309))
+                                             color=discord.Colour(0x03f0fc))
             map_chosen_embed.set_image(url=chosen_map_image_url)
 
             return map_chosen_embed
@@ -350,7 +350,7 @@ class CSGO(commands.Cog):
         current_team_captain = choice((team1_captain, team2_captain))
 
         current_category = ctx.channel.category
-        temp_channel = await ctx.guild.create_text_channel('temp', category=current_category)
+        temp_channel = await ctx.guild.create_text_channel('testing', category=current_category)
 
         self.veto_image.construct_veto_image(map_list, veto_image_fp,
                                              is_vetoed=is_vetoed, spacing=25)
@@ -394,11 +394,11 @@ class CSGO(commands.Cog):
     async def connect(self, ctx):
         with valve.source.a2s.ServerQuerier(bot.server_address, timeout=20) as server:
             info = server.info()
-        embed = discord.Embed(title=info['server_name'], color=0xf4c14e)
+        embed = discord.Embed(title=info['server_name'], color=0x00FF00)
         embed.set_thumbnail(
-            url="https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/730/69f7ebe2735c366c65c0b33dae00e12dc40edbe4.jpg")
+            url="https://scontent.xx.fbcdn.net/v/t1.15752-9/119154591_373692013645493_2520568812144261390_n.png?_nc_cat=100&_nc_sid=ae9488&_nc_ohc=iVOCUJ0z9PwAX8wuYwM&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=754609b9ca33e2cad1dd41f4e03f6f27&oe=5F87528B")
         embed.add_field(name='__**📡Quick Connect**__',
-                        value=f'steam://connect/{bot.server_address[0]}:{bot.server_address[1]}/{bot.server_password}',
+                        value=f'`CLICK TO CONNECT` steam://connect/{bot.server_address[0]}:{bot.server_address[1]}/{bot.server_password}',
                         inline=False)
         embed.add_field(name='__**📡Console Connect**__',
                         value=f'```connect {bot.server_address[0]}:{bot.server_address[1]}; password {bot.server_password}```',
