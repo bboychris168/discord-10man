@@ -62,6 +62,7 @@ class CSGO(commands.Cog):
         # TODO: Add a way to cancel
         channel_original = ctx.author.voice.channel
         players = ctx.author.voice.channel.members.copy()
+        # TODO: comment out bellow for full functionality 
         if self.bot.dev:
             players = [ctx.author] * 10
         emojis = emoji_bank.copy()
