@@ -1,3 +1,5 @@
+import requests
+import json
 from aiohttp import web
 import socket
 from json import JSONDecodeError
@@ -59,6 +61,17 @@ class WebServer:
                 s_split = s.split('=')
                 if s_split[0] == 'winner':
                     await self.ctx.send(f'{s_split[1]} wins!')
+                    
+                    with open('config.json') as config:
+
+                        json_data = json.load(config)
+                        dathost_username = str(json_data['dathost_user'])
+                        dathost_passwords = str(json_data['dathost_password'])
+                        dathost_server_ids = str(json_data['dathost_server_id'])
+                        
+                        requests.post(f'https://dathost.net/api/0.1/game-servers/{dathost_server_ids}/stop',
+                        auth=(f'{dathost_username}', f'{dathost_passwords}'))
+
                     break
 
         return _http_error_handler()

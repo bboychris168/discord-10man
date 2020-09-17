@@ -117,7 +117,7 @@ class Setup(commands.Cog):
     @commands.command(hidden=True)
     async def rank(self, ctx):
         # TODO use kento rankme plugin website for stats
-        await ctx.channel.send('```website```')
+        await ctx.channel.send('[LINKED](https://www.faceit.com)')
 
     @commands.command(aliases=['version'], help='This command gets the bot information and version')
     async def about(self, ctx):

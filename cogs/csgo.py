@@ -7,6 +7,7 @@ import sqlite3
 import traceback
 import valve.rcon
 import valve.source.a2s
+import requests
 
 from datetime import date
 from discord.ext import commands
@@ -45,6 +46,16 @@ class CSGO(commands.Cog):
         not_connected_members = []
 
         await ctx.channel.purge(limit=100)
+
+        with open('config.json') as config:
+
+            json_data = json.load(config)
+            dathost_username = str(json_data['dathost_user'])
+            dathost_passwords = str(json_data['dathost_password'])
+            dathost_server_ids = str(json_data['dathost_server_id'])
+            
+            requests.post(f'https://dathost.net/api/0.1/game-servers/{dathost_server_ids}/start',
+            auth=(f'{dathost_username}', f'{dathost_passwords}'))
         
         for member in ctx.author.voice.channel.members:
             cursor.execute('SELECT 1 FROM users WHERE discord_id = ?', (str(member),))

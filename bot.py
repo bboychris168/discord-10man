@@ -9,7 +9,7 @@ __version__ = '0.5.0'
 startup_extensions = ["setup", "csgo"]
 
 # TODO: Change prefix to . when syncing
-bot = commands.Bot(command_prefix='!', case_insensitive=True, description='A bot to run CSGO PUGS.')
+bot = commands.Bot(command_prefix=['!', '.'], case_insensitive=True, description='A bot to run CSGO PUGS.')
 bot_secret: str
 
 # TODO: Refactor these variables to pass through into the init of the cog instead of importing the file
@@ -37,7 +37,7 @@ async def on_ready():
         )''')
     db.close()
     # TODO: Custom state for waiting for pug or if a pug is already playing
-    await bot.change_presence(status=discord.Status.idle, activity=discord.Activity(type=discord.ActivityType.playing,
+    await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.playing,
                                                                                     state='Waiting', details='Waiting',
                                                                                     name='CSGO Pug'))
     global server_address, server_password, RCON_password
