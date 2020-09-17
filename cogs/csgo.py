@@ -39,8 +39,8 @@ class CSGO(commands.Cog):
     async def pug(self, ctx):
         if not ctx.author.voice or not ctx.author.voice.channel:
             raise commands.UserInputError(message='You must be in a voice channel.')
-        """ if len(ctx.author.voice.channel.members) < 10:
-            raise commands.CommandError(message='```There must be 10 members connected to the voice channel```') """
+        if len(ctx.author.voice.channel.members) < 10:
+            raise commands.CommandError(message='```There must be 10 members connected to the voice channel```')
         db = sqlite3.connect('./main.sqlite')
         cursor = db.cursor()
         not_connected_members = []
@@ -53,7 +53,7 @@ class CSGO(commands.Cog):
             dathost_username = str(json_data['dathost_user'])
             dathost_passwords = str(json_data['dathost_password'])
             dathost_server_ids = str(json_data['dathost_server_id'])
-            
+
             requests.post(f'https://dathost.net/api/0.1/game-servers/{dathost_server_ids}/start',
             auth=(f'{dathost_username}', f'{dathost_passwords}'))
         
@@ -74,8 +74,8 @@ class CSGO(commands.Cog):
         channel_original = ctx.author.voice.channel
         players = ctx.author.voice.channel.members.copy()
         # TODO: comment out bellow for full functionality 
-        if self.bot.dev:
-            players = [ctx.author] * 10
+        """ if self.bot.dev:
+            players = [ctx.author] * 10 """
         emojis = emoji_bank.copy()
         del emojis[len(players) - 2:len(emojis)]
         emojis_selected = []
