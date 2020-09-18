@@ -39,8 +39,8 @@ class CSGO(commands.Cog):
     async def pug(self, ctx):
         if not ctx.author.voice or not ctx.author.voice.channel:
             raise commands.UserInputError(message='You must be in a voice channel.')
-        if len(ctx.author.voice.channel.members) < 10:
-            raise commands.CommandError(message='```There must be 10 members connected to the voice channel```')
+        """ if len(ctx.author.voice.channel.members) < 10:
+            raise commands.CommandError(message='```There must be 10 members connected to the voice channel```') """
         db = sqlite3.connect('./main.sqlite')
         cursor = db.cursor()
         not_connected_members = []
@@ -74,8 +74,8 @@ class CSGO(commands.Cog):
         channel_original = ctx.author.voice.channel
         players = ctx.author.voice.channel.members.copy()
         # TODO: comment out bellow for full functionality 
-        """ if self.bot.dev:
-            players = [ctx.author] * 10 """
+        if self.bot.dev:
+            players = [ctx.author] * 10
         emojis = emoji_bank.copy()
         del emojis[len(players) - 2:len(emojis)]
         emojis_selected = []
@@ -213,7 +213,7 @@ class CSGO(commands.Cog):
                 'players': team2_steamIDs
             },
             'cvars': {
-                'get5_event_api_url': f'http://{self.bot.web_serve.IP}:{self.bot.web_server.port}/'
+                'get5_event_api_url': f'http://101.114.109.132:{self.bot.web_server.port}/'
             }
         }
 
@@ -229,10 +229,12 @@ class CSGO(commands.Cog):
         valve.rcon.execute(bot.server_address, bot.RCON_password,
                            f'get5_loadmatch_url "{match_config_json.attachments[0].url}"')
 
-        score_embed = discord.Embed()
+        general_channel = self.bot.get_channel(702908501533655203)
+        score_embed = discord.Embed(title='Match in Progress', color=0x00FF00)
+        score_embed.add_field(name='📺GOTV', value='steam://connect/139.99.209.229:27538', inline=True)
         score_embed.add_field(name='0', value=f'team_{team1_captain.display_name}', inline=True)
         score_embed.add_field(name='0', value=f'team_{team2_captain.display_name}', inline=True)
-        score_message = await ctx.send('Match in Progress', embed=score_embed)
+        score_message = await general_channel.send(embed=score_embed)
 
         self.bot.web_server.get_context(ctx=ctx, channels=[channel_original, team1_channel, team2_channel],
                                         players=team1+team2, score_message=score_message)
@@ -419,7 +421,6 @@ class CSGO(commands.Cog):
         embed.add_field(name='__**📡Console Connect**__',
                         value=f'```connect {bot.server_address[0]}:{bot.server_address[1]}; password {bot.server_password}```',
                         inline=False)
-        #embed.add_field(name='**📺GOTV:**')
         embed.add_field(name='Players', value=f'{info["player_count"]}/{info["max_players"]}', inline=True)
         embed.add_field(name='Map', value=info['map'], inline=True)
         await ctx.send(embed=embed)
