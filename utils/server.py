@@ -2,7 +2,7 @@ import requests
 import json
 from aiohttp import web
 import socket
-from json import JSONDecodeError, loads
+from json import JSONDecodeError
 import discord
 
 
@@ -53,13 +53,11 @@ class WebServer:
             return _http_error_handler("request-type")
 
         try:
-            request_json = await request.json()
+            get5_event = await request.json()
         except JSONDecodeError:
-            return self._http_error_handler("json-body")
+            return _http_error_handler("json-body")
 
         # TODO: Create Checks for the JSON
-
-        get5_event = loads(request_json)
 
         if get5_event['event'] == 'series_start':
             self.team_names = [get5_event['params']['team1_name'], get5_event['params']['team2_name']]

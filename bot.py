@@ -41,8 +41,7 @@ async def on_ready():
                                                                                     state='Waiting', details='Waiting',
                                                                                     name='CSGO Pug'))
     global server_address, server_password, RCON_password
-    if bot.user.id == 572166692545888288:
-        bot.dev = True
+    bot.dev = bot.user.id == 572166692545888288
 
     bot.version = __version__
 
