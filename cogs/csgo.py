@@ -173,9 +173,9 @@ class CSGO(commands.Cog):
         team2_steamIDs = []
 
         team1_channel = await ctx.author.voice.channel.category.create_voice_channel(
-            name=f'team_{team1_captain.display_name}', user_limit=5)
+            name=f'Team{team1_captain.display_name}', user_limit=5)
         team2_channel = await ctx.author.voice.channel.category.create_voice_channel(
-            name=f'team_{team2_captain.display_name}', user_limit=5)
+            name=f'Team{team2_captain.display_name}', user_limit=5)
 
         for player in team1:
             await player.move_to(channel=team1_channel, reason=f'You are on {team1_captain}\'s Team')
@@ -201,13 +201,13 @@ class CSGO(commands.Cog):
             'players_per_team': len(team2),
             'min_players_to_ready': 1,
             'team1': {
-                'name': f'team_{team1_captain.display_name}',
+                'name': f'Team {team1_captain.display_name}',
                 'tag': 'team1',
                 'flag': 'AU',
                 'players': team1_steamIDs
             },
             'team2': {
-                'name': f'team_{team2_captain.display_name}',
+                'name': f'Team {team2_captain.display_name}',
                 'tag': 'team2',
                 'flag': 'AU',
                 'players': team2_steamIDs
@@ -231,9 +231,9 @@ class CSGO(commands.Cog):
 
         general_channel = self.bot.get_channel(702908501533655203)
         score_embed = discord.Embed(title='Match in Progress', color=0x00FF00)
-        score_embed.add_field(name='📺GOTV', value='steam://connect/139.99.209.229:27538', inline=True)
-        score_embed.add_field(name='0', value=f'team_{team1_captain.display_name}', inline=True)
-        score_embed.add_field(name='0', value=f'team_{team2_captain.display_name}', inline=True)
+        score_embed.add_field(name='0', value=f'Team {team1_captain.display_name}', inline=True)
+        score_embed.add_field(name='0', value=f'Team {team2_captain.display_name}', inline=True)
+        score_embed.add_field(name='📺GOTV', value='steam://connect/139.99.209.229:27538', inline=False)
         score_message = await general_channel.send(embed=score_embed)
 
         self.bot.web_server.get_context(ctx=ctx, channels=[channel_original, team1_channel, team2_channel],
