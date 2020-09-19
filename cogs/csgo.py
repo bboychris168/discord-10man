@@ -53,6 +53,7 @@ class CSGO(commands.Cog):
             dathost_username = str(json_data['dathost_user'])
             dathost_passwords = str(json_data['dathost_password'])
             dathost_server_ids = str(json_data['dathost_server_id'])
+            #general_channel_ids = int(json_data['general_chat_id'])
 
             requests.post(f'https://dathost.net/api/0.1/game-servers/{dathost_server_ids}/start',
             auth=(f'{dathost_username}', f'{dathost_passwords}'))
