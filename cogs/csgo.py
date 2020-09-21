@@ -238,7 +238,7 @@ class CSGO(commands.Cog):
                            f'get5_loadmatch_url "{match_config_json.attachments[0].url}"')
 
         general_channel = self.bot.get_channel(702908501533655203)
-        score_embed = discord.Embed(title='Match in Progress', color=0x00FF00)
+        score_embed = discord.Embed(title='**Match in Progress**', color=0x00FF00)
         score_embed.add_field(name='0', value=f'Team {team1_captain.display_name}', inline=True)
         score_embed.add_field(name='0', value=f'Team {team2_captain.display_name}', inline=True)
         score_embed.add_field(name='📺GOTV', value='steam://connect/139.99.209.229:27538', inline=False)
@@ -429,7 +429,7 @@ class CSGO(commands.Cog):
                         value=f'`CLICK TO CONNECT` steam://connect/{self.bot.server_address[0]}:{self.bot.server_address[1]}/{self.bot.server_password}',
                         inline=False)
         embed.add_field(name='__**📡Console Connect**__',
-                        value=f'connect {self.bot.server_address[0]}:{self.bot.server_address[1]}; password {self.bot.server_password}',
+                        value=f'```connect {self.bot.server_address[0]}:{self.bot.server_address[1]}; password {self.bot.server_password}```',
                         inline=False)
         embed.add_field(name='Players', value=f'{info["player_count"]}/{info["max_players"]}', inline=True)
         embed.add_field(name='Map', value=info['map'], inline=True)
