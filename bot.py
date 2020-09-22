@@ -35,8 +35,8 @@ class Discord_10man(commands.Bot):
                                    activity=discord.Activity(type=discord.ActivityType.playing,
                                                              state='Waiting', details='Waiting',
                                                              name='CSGO Pug'))
-
-        self.dev = self.user.id == 745000319942918303
+        # Set discord bot id to test the bot
+        self.dev = self.user.id == 572166692545888288
 
         await self.web_server.http_start()
         print(f'{self.user} connected.')

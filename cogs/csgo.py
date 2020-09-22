@@ -38,8 +38,8 @@ class CSGO(commands.Cog):
     async def pug(self, ctx):
         if not ctx.author.voice or not ctx.author.voice.channel:
             raise commands.UserInputError(message='You must be in a voice channel.')
-        """ if len(ctx.author.voice.channel.members) < 10:
-            raise commands.CommandError(message='```There must be 10 members connected to the voice channel```') """
+        if len(ctx.author.voice.channel.members) < 10:
+            raise commands.CommandError(message='```There must be 10 members connected to the voice channel```')
         db = sqlite3.connect('./main.sqlite')
         cursor = db.cursor()
         not_connected_members = []
@@ -73,9 +73,9 @@ class CSGO(commands.Cog):
         # TODO: Add a way to cancel
         channel_original = ctx.author.voice.channel
         players = ctx.author.voice.channel.members.copy()
-        # TODO: comment out bellow for full functionality 
-        if self.bot.dev:
-            players = [ctx.author] * 10
+        # TODO: comment out bellow to for functionality or do not comment out below to test the bot.
+        """ if self.bot.dev:
+            players = [ctx.author] * 10 """
         emojis = emoji_bank.copy()
         del emojis[len(players) - 2:len(emojis)]
         emojis_selected = []
@@ -427,11 +427,11 @@ class CSGO(commands.Cog):
         embed = discord.Embed(title=info['server_name'], color=0x00FF00)
         embed.set_thumbnail(
             url="https://scontent.xx.fbcdn.net/v/t1.15752-9/119154591_373692013645493_2520568812144261390_n.png?_nc_cat=100&_nc_sid=ae9488&_nc_ohc=iVOCUJ0z9PwAX8wuYwM&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=754609b9ca33e2cad1dd41f4e03f6f27&oe=5F87528B")
-        embed.add_field(name='Quick Connect',
+        embed.add_field(name='__**📡Quick Connect**__',
                         value=f'steam://connect/{self.bot.servers[0]["server_address"]}:{self.bot.servers[0]["server_port"]}/{self.bot.servers[0]["server_password"]}',
                         inline=False)
         embed.add_field(name='__**📡Console Connect**__',
-                        value=f'connect {self.bot.servers[0]["server_address"]}:{self.bot.servers[0]["server_port"]}; password {self.bot.servers[0]["server_password"]}',
+                        value=f'```connect {self.bot.servers[0]["server_address"]}:{self.bot.servers[0]["server_port"]}; password {self.bot.servers[0]["server_password"]}```',
                         inline=False)
         embed.add_field(name='Players', value=f'{info["player_count"]}/{info["max_players"]}', inline=True)
         embed.add_field(name='Map', value=info['map'], inline=True)

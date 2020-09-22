@@ -1,6 +1,7 @@
 import socket
 import discord
-
+import requests
+import json
 from aiohttp import web
 from json import JSONDecodeError
 
@@ -44,7 +45,6 @@ class WebServer:
         request : web.Request
             AIOHTTP request object.
         """
-
         # or "Authorization"
         if request.method != 'POST':
             # Used to decline any requests what doesn't match what our
@@ -71,11 +71,22 @@ class WebServer:
             await self.score_message.edit(embed=score_embed)
 
         elif get5_event['event'] == 'series_end':
-            await self.score_message.edit('Game Over')
+            await self.score_message.edit(content='Game Over')
             for player in self.players:
                 await player.move_to(channel=self.channels[0], reason=f'Game Over')
             await self.channels[1].delete(reason='Game Over')
             await self.channels[2].delete(reason='Game Over')
+            
+            with open('config.json') as config:
+
+                    json_data = json.load(config)
+                    dathost_username = str(json_data['dathost_user'])
+                    dathost_passwords = str(json_data['dathost_password'])
+                    dathost_server_ids = str(json_data['dathost_server_id'])
+                    #general_channel_ids = int(json_data['general_chat_id'])
+
+            requests.post(f'https://dathost.net/api/0.1/game-servers/{dathost_server_ids}/stop',
+                auth=(f'{dathost_username}', f'{dathost_passwords}'))
 
         return _http_error_handler()
 
