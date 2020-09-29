@@ -44,8 +44,6 @@ class CSGO(commands.Cog):
         cursor = db.cursor()
         not_connected_members = []
 
-        await ctx.channel.purge(limit=100)
-
         with open('config.json') as config:
 
             json_data = json.load(config)
@@ -56,6 +54,8 @@ class CSGO(commands.Cog):
 
             requests.post(f'https://dathost.net/api/0.1/game-servers/{dathost_server_ids}/start',
             auth=(f'{dathost_username}', f'{dathost_passwords}'))
+
+        await ctx.channel.purge(limit=100)
         
         for member in ctx.author.voice.channel.members:
             cursor.execute('SELECT 1 FROM users WHERE discord_id = ?', (str(member),))
@@ -221,7 +221,7 @@ class CSGO(commands.Cog):
                 'players': team2_steamIDs
             },
             'cvars': {
-                'get5_event_api_url': f'http://101.114.109.132:{self.bot.web_server.port}/'
+                'get5_event_api_url': f'http://101.114.249.88:{self.bot.web_server.port}/'
             }
         }
 
