@@ -1,4 +1,5 @@
 import asyncio
+import checks
 import discord
 import json
 import os
@@ -9,7 +10,7 @@ import valve.source.a2s
 import requests
 
 from datetime import date
-from discord.ext import commands
+from discord.ext import commands, tasks
 from random import choice
 from random import randint
 from utils.veto_image import VetoImage
@@ -29,48 +30,20 @@ class CSGO(commands.Cog):
     def __init__(self, bot, veto_image):
         self.bot = bot
         self.veto_image = veto_image
+        self.readied_up = False
 
     @commands.command(aliases=['10man', 'setup','start','ready'],
                       help='This command takes the users in a voice channel and selects two random '
                            'captains. It then allows those captains to select the members of their '
                            'team in a 1 2 2 2 1 fashion. It then configures the server with the '
                            'correct config.', brief='Helps automate setting up a PUG')
+    @commands.check(checks.voice_channel)
+    @commands.check(checks.ten_players)
+    @commands.check(checks.linked_accounts)
     async def pug(self, ctx):
-        if not ctx.author.voice or not ctx.author.voice.channel:
-            raise commands.UserInputError(message='You must be in a voice channel.')
-        """ if len(ctx.author.voice.channel.members) < 10:
-            raise commands.CommandError(message='```There must be 10 members connected to the voice channel```') """
+        # TODO: Refactor this mess
         db = sqlite3.connect('./main.sqlite')
         cursor = db.cursor()
-        not_connected_members = []
-
-        with open('config.json') as config:
-
-            json_data = json.load(config)
-            dathost_username = str(json_data['dathost_user'])
-            dathost_passwords = str(json_data['dathost_password'])
-            dathost_server_ids = str(json_data['dathost_server_id'])
-            #general_channel_ids = int(json_data['general_chat_id'])
-
-            requests.post(f'https://dathost.net/api/0.1/game-servers/{dathost_server_ids}/start',
-            auth=(f'{dathost_username}', f'{dathost_passwords}'))
-
-        await ctx.channel.purge(limit=100)
-        
-        for member in ctx.author.voice.channel.members:
-            cursor.execute('SELECT 1 FROM users WHERE discord_id = ?', (str(member),))
-            data = cursor.fetchone()
-            if data is None:
-                not_connected_members.append(member)
-        if len(not_connected_members) > 0:
-            error_message = ''
-            for member in not_connected_members:
-                error_message += f'<@{member.id}> '
-            error_message += 'must connect their steam account with the command ```!login <Steam Profile URL> or <SteamID>```'
-            raise commands.UserInputError(message=error_message)
-
-        # TODO: Refactor this mess
-        # TODO: Add a way to cancel
         channel_original = ctx.author.voice.channel
         players = ctx.author.voice.channel.members.copy()
         # TODO: comment out bellow to for functionality or do not comment out below to test the bot.
@@ -169,7 +142,6 @@ class CSGO(commands.Cog):
 
             player_veto_count += 1
 
-
         message_text = 'Map Veto Loading'
         players_text = 'None'
         embed = self.player_veto_embed(message_text=message_text, players_text=players_text, team1=team1,
@@ -247,15 +219,16 @@ class CSGO(commands.Cog):
         score_message = await general_channel.send(embed=score_embed)
 
         self.bot.web_server.get_context(ctx=ctx, channels=[channel_original, team1_channel, team2_channel],
-                                        players=team1+team2, score_message=score_message)
+                                        players=team1 + team2, score_message=score_message)
+        db.close()
+        if not self.pug.enabled:
+            self.queue_check.start()
 
     @pug.error
     async def pug_error(self, ctx, error):
-        if isinstance(error, commands.UserInputError):
+        if isinstance(error, commands.CommandError):
             await ctx.send(error)
-        elif isinstance(error, commands.CommandError):
-            await ctx.send(error)
-        traceback.print_exc(error)
+        traceback.print_exc()
 
     def player_veto_embed(self, message_text, players_text, team1, team1_captain, team2, team2_captain):
         team1_text = ''
@@ -419,10 +392,51 @@ class CSGO(commands.Cog):
 
         return map_list
 
+    @tasks.loop(seconds=5.0)
+    async def queue_check(self):
+        if len(self.bot.queue_voice_channel.members) >= 10:
+            embed = discord.Embed()
+            embed.add_field(name='You have 60 seconds to ready up!', value='Ready: ✅', inline=False)
+            ready_up_message = await self.bot.queue_text_channel.send(embed=embed)
+            await ready_up_message.add_reaction('✅')
+            self.ready_up.start(message=ready_up_message, members=self.bot.queue_voice_channel.members)
+            self.queue_check.stop()
+
+    @tasks.loop(seconds=1.0, count=60)
+    async def ready_up(self, message, members):
+        message = await self.bot.queue_text_channel.fetch_message(message.id)
+
+        # TODO: Add check for only the first 10 users
+        check_emoji = None
+        for reaction in message.reactions:
+            if reaction.emoji == '✅':
+                check_emoji = reaction
+                break
+
+        users = await check_emoji.users().flatten()
+        ready = True
+        for member in members:
+            if member not in users:
+                ready = False
+                break
+
+        if ready:
+            self.readied_up = True
+            self.ready_up.stop()
+
+    @ready_up.after_loop
+    async def ready_up_cancel(self):
+        if self.readied_up:
+            self.readied_up = False
+            await self.pug(self.bot.queue_text_channel)
+        else:
+            await self.bot.queue_text_channel.send('Not everyone readied up')
+
     @commands.command(help='This command creates a URL that people can click to connect to the server.',
                       brief='Creates a URL people can connect to')
     async def connect(self, ctx):
-        with valve.source.a2s.ServerQuerier((self.bot.servers[0]["server_address"], self.bot.servers[0]["server_port"]), timeout=20) as server:
+        with valve.source.a2s.ServerQuerier((self.bot.servers[0]["server_address"], self.bot.servers[0]["server_port"]),
+                                            timeout=20) as server:
             info = server.info()
         embed = discord.Embed(title=info['server_name'], color=0x00FF00)
         embed.set_thumbnail(
