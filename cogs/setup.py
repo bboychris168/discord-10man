@@ -37,7 +37,7 @@ class Setup(commands.Cog):
         if isinstance(error, commands.UserInputError):
             #await ctx.send(error)
             await ctx.send('```!login <Steam Profile URL> or <SteamID>```')
-        traceback.print_exc(error)
+        traceback.print_exc()
 
     @commands.command(help='Command to set the server for the queue system. You must be in a voice channel.',
                       brief='Set\'s the server for the queue')

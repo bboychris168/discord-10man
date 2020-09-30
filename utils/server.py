@@ -2,6 +2,7 @@ import socket
 import discord
 import requests
 import json
+import valve.rcon
 from aiohttp import web
 from json import JSONDecodeError
 
@@ -86,9 +87,11 @@ class WebServer:
                 await player.move_to(channel=self.channels[0], reason=f'Game Over')
             await self.channels[1].delete(reason='Game Over')
             await self.channels[2].delete(reason='Game Over')
+            valve.rcon.execute((self.bot.servers[0]["server_address"], self.bot.servers[0]["server_port"]),
+                           self.bot.servers[0]["RCON_password"],'sm_kick @all Match has ended.')
 
-            requests.post(f'https://dathost.net/api/0.1/game-servers/{dathost_server_ids}/stop',
-                auth=(f'{dathost_username}', f'{dathost_passwords}'))
+            """ requests.post(f'https://dathost.net/api/0.1/game-servers/{dathost_server_ids}/stop',
+                auth=(f'{dathost_username}', f'{dathost_passwords}')) """
 
         elif get5_event['event'] == 'series_cancel':
             series_cancel_embed = discord.Embed(title='Match cancelled by Admin', color=0xff0000)
@@ -97,11 +100,13 @@ class WebServer:
                 await player.move_to(channel=self.channels[0], reason=f'Game Over')
             await self.channels[1].delete(reason='Game Over')
             await self.channels[2].delete(reason='Game Over')
+            valve.rcon.execute((self.bot.servers[0]["server_address"], self.bot.servers[0]["server_port"]),
+                           self.bot.servers[0]["RCON_password"],'sm_kick @all Match cancelled by Admin')
             
-            requests.post(f'https://dathost.net/api/0.1/game-servers/{dathost_server_ids}/stop',
-                auth=(f'{dathost_username}', f'{dathost_passwords}'))
+            """ requests.post(f'https://dathost.net/api/0.1/game-servers/{dathost_server_ids}/stop',
+                auth=(f'{dathost_username}', f'{dathost_passwords}')) """
 
-        return _http_error_handler()
+        return _http_error_handler() 
 
     async def http_start(self) -> None:
         """
