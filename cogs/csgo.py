@@ -394,7 +394,7 @@ class CSGO(commands.Cog):
 
     @tasks.loop(seconds=5.0)
     async def queue_check(self):
-        if len(self.bot.queue_voice_channel.members) >= 10:
+        if len(self.bot.queue_voice_channel.members) >= 1:
             embed = discord.Embed()
             embed.add_field(name='You have 60 seconds to ready up!', value='Ready: ✅', inline=False)
             ready_up_message = await self.bot.queue_text_channel.send(embed=embed)
