@@ -13,6 +13,7 @@ from datetime import date
 from discord.ext import commands, tasks
 from random import choice
 from random import randint
+from utils.csgo_server import CSGOServer
 from utils.veto_image import VetoImage
 
 # TODO: Allow administrators to update the maplist
@@ -40,10 +41,17 @@ class CSGO(commands.Cog):
     @commands.check(checks.voice_channel)
     @commands.check(checks.ten_players)
     @commands.check(checks.linked_accounts)
+    @commands.check(checks.available_server)
     async def pug(self, ctx):
         # TODO: Refactor this mess
         db = Database('sqlite:///main.sqlite')
         await db.connect()
+        csgo_server = self.bot.servers[0]
+        for server in self.bot.servers:
+            if server.available:
+                server.available = False
+                csgo_server = server
+                break
         channel_original = ctx.author.voice.channel
         players = ctx.author.voice.channel.members.copy()
         # TODO: comment out bellow to for functionality or do not comment out below to test the bot.
@@ -199,25 +207,28 @@ class CSGO(commands.Cog):
             json.dump(match_config, outfile, ensure_ascii=False, indent=4)
 
         match_config_json = await ctx.send(file=discord.File('match_config.json', '../match_config.json'))
-        #await ctx.send('If you are coaching, once you join the server, type .coach')
+        await ctx.send('If you are coaching, once you join the server, type .coach')
+        loading_map_message = await ctx.send('Server is being configured')
         await asyncio.sleep(0.3)
-        valve.rcon.execute((self.bot.servers[0]["server_address"], self.bot.servers[0]["server_port"]),
-                           self.bot.servers[0]["RCON_password"], 'exec triggers/get5')
-        await self.connect(ctx)
+        valve.rcon.execute((csgo_server.server_address, csgo_server.server_port), csgo_server.RCON_password,
+                           'exec triggers/get5')
         await asyncio.sleep(10)
-        valve.rcon.execute((self.bot.servers[0]["server_address"], self.bot.servers[0]["server_port"]),
-                           self.bot.servers[0]["RCON_password"],
+        await loading_map_message.delete()
+        valve.rcon.execute((csgo_server.server_address, csgo_server.server_port), csgo_server.RCON_password,
                            f'get5_loadmatch_url "{match_config_json.attachments[0].url}"')
 
-        general_channel = self.bot.get_channel(702908501533655203)
-        score_embed = discord.Embed(title='**Match in Progress**', color=0x00FF00)
-        score_embed.add_field(name='0', value=f'Team {team1_captain.display_name}', inline=True)
-        score_embed.add_field(name='0', value=f'Team {team2_captain.display_name}', inline=True)
-        score_embed.add_field(name='📺GOTV', value='steam://connect/139.99.209.229:27538', inline=False)
-        score_message = await general_channel.send(embed=score_embed)
+        await asyncio.sleep(5)
+        connect_embed = await self.connect_embed(csgo_server)
+        await ctx.send(embed=connect_embed)
+        score_embed = discord.Embed(title='Match in Progress', color=0x00FF00)
+        score_embed.add_field(name='0', value=f'team_{team1_captain.display_name}', inline=True)
+        score_embed.add_field(name='0', value=f'team_{team2_captain.display_name}', inline=True)
+        score_message = await ctx.send(embed=score_embed)
 
-        self.bot.web_server.get_context(ctx=ctx, channels=[channel_original, team1_channel, team2_channel],
-                                        players=team1 + team2, score_message=score_message)
+        csgo_server.get_context(ctx=ctx, channels=[channel_original, team1_channel, team2_channel],
+                                players=team1 + team2, score_message=score_message)
+        self.bot.web_server.add_server(csgo_server)
+
         if not self.pug.enabled:
             self.queue_check.start()
 
@@ -428,27 +439,31 @@ class CSGO(commands.Cog):
             self.readied_up = False
             await self.pug(self.bot.queue_text_channel)
         else:
+            # TODO: Kick people who haven't readied up
             await self.bot.queue_text_channel.send('Not everyone readied up')
             self.queue_check.start()
 
     @commands.command(help='This command creates a URL that people can click to connect to the server.',
-                      brief='Creates a URL people can connect to')
+                      brief='Creates a URL people can connect to', hidden=True)
     async def connect(self, ctx):
-        with valve.source.a2s.ServerQuerier((self.bot.servers[0]["server_address"], self.bot.servers[0]["server_port"]),
-                                            timeout=20) as server:
+        embed = await self.connect_embed(self.bot.servers[0])
+        await ctx.send(embed=embed)
+
+    async def connect_embed(self, csgo_server: CSGOServer) -> discord.Embed:
+        with valve.source.a2s.ServerQuerier((csgo_server.server_address, csgo_server.server_port), timeout=20) as server:
             info = server.info()
         embed = discord.Embed(title=info['server_name'], color=0x00FF00)
         embed.set_thumbnail(
             url="https://scontent.xx.fbcdn.net/v/t1.15752-9/119154591_373692013645493_2520568812144261390_n.png?_nc_cat=100&_nc_sid=ae9488&_nc_ohc=iVOCUJ0z9PwAX8wuYwM&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=754609b9ca33e2cad1dd41f4e03f6f27&oe=5F87528B")
         embed.add_field(name='__**📡Quick Connect**__',
-                        value=f'steam://connect/{self.bot.servers[0]["server_address"]}:{self.bot.servers[0]["server_port"]}/{self.bot.servers[0]["server_password"]}',
+                        value=f'steam://connect/{csgo_server.server_address}:{csgo_server.server_port}/{csgo_server.server_password}',
                         inline=False)
         embed.add_field(name='__**📡Console Connect**__',
-                        value=f'```connect {self.bot.servers[0]["server_address"]}:{self.bot.servers[0]["server_port"]}; password {self.bot.servers[0]["server_password"]}```',
+                        value=f'```connect {csgo_server.server_address}:{csgo_server.server_port}; password {csgo_server.server_password}```',
                         inline=False)
         embed.add_field(name='Players', value=f'{info["player_count"]}/{info["max_players"]}', inline=True)
         embed.add_field(name='Map', value=info['map'], inline=True)
-        await ctx.send(embed=embed)
+        return embed
 
     @commands.command(aliases=['maps'], help='This command allows the user to change the map pool. '
                                              'Must have odd number of maps. Use "active" or "reserve" for the respective map pools.',
