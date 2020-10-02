@@ -1,12 +1,13 @@
-import socket
 import discord
 import requests
 import json
 import valve.rcon
+import socket
+
 from aiohttp import web
 from json import JSONDecodeError
+from typing import List
 from utils.csgo_server import CSGOServer
-
 
 
 def _http_error_handler(error=False) -> web.Response:
@@ -30,11 +31,13 @@ def _http_error_handler(error=False) -> web.Response:
 
 class WebServer:
     def __init__(self, bot):
-        self.bot = bot
-        self.IP = socket.gethostbyname(socket.gethostname())
-        self.port = 3000
-        self.site = None
-        self.csgo_servers: [CSGOServer] = []
+        from bot import Discord_10man
+
+        self.bot: Discord_10man = bot
+        self.IP: str = socket.gethostbyname(socket.gethostname())
+        self.port: int = 3000
+        self.site: web.TCPSite = None
+        self.csgo_servers: List[CSGOServer] = []
 
     async def _handler(self, request: web.Request) -> web.Response:
         """
@@ -78,6 +81,7 @@ class WebServer:
                 server.set_team_names([get5_event['params']['team1_name'], get5_event['params']['team2_name']])
 
             elif get5_event['event'] == 'round_end':
+                server.update_team_scores([get5_event["params"]["team1_score"], get5_event["params"]["team2_score"]])
                 score_embed = discord.Embed()
                 score_embed.add_field(name=f'{get5_event["params"]["team1_score"]}',
                                       value=f'{server.team_names[0]}', inline=True)
@@ -128,11 +132,5 @@ class WebServer:
 
         await self.site.stop()
 
-    def get_context(self, ctx, channels: list, players: list, score_message):
-        self.ctx = ctx
-        self.channels = channels
-        self.players = players
-        self.score_message = score_message
-
-    def add_server(self, csgo_server):
+    def add_server(self, csgo_server: CSGOServer):
         self.csgo_servers.append(csgo_server)
