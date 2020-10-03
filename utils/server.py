@@ -104,8 +104,9 @@ class WebServer:
                     valve.rcon.execute((csgo_server.server_address, csgo_server.server_port), csgo_server.RCON_password,
                                         'bot_kick @all Game Cancelled by Admin')
 
-                for player in server.players:
-                    await player.move_to(channel=server.channels[0], reason=f'Game Over')
+                if self.bot.cogs['CSGO'].pug.enabled:
+                    for player in server.players:
+                        await player.move_to(channel=server.channels[0], reason=f'Game Over')
                 await server.channels[1].delete(reason='Game Over')
                 await server.channels[2].delete(reason='Game Over')
                 server.make_available()

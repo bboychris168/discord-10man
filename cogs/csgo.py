@@ -179,6 +179,10 @@ class CSGO(commands.Cog):
 
         map_list = await self.map_veto(ctx, team1_captain, team2_captain)
 
+        bot_ip = self.bot.web_server.IP
+        if self.bot.bot_IP != "":
+            bot_ip = self.bot.bot_IP
+
         match_config = {
             'matchid': f'PUG-{date.today().strftime("%d-%B-%Y")}',
             'num_maps': 1,
@@ -201,7 +205,7 @@ class CSGO(commands.Cog):
                 'players': team2_steamIDs
             },
             'cvars': {
-                'get5_event_api_url': f'http://101.114.249.88:{self.bot.web_server.port}/'
+                'get5_event_api_url': f'http://{bot_ip}:{self.bot.web_server.port}/'
             }
         }
 
@@ -471,6 +475,7 @@ class CSGO(commands.Cog):
     @commands.command(aliases=['maps'], help='This command allows the user to change the map pool. '
                                              'Must have odd number of maps. Use "active" or "reserve" for the respective map pools.',
                       brief='Changes map pool', usage='<lists of maps> or "active" or "reserve"')
+    @commands.has_permissions(administrator=True)
     async def map_pool(self, ctx: commands.Context, *, args):
         global current_map_pool
         if args == 'active':
