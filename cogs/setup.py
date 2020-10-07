@@ -34,7 +34,8 @@ class Setup(commands.Cog):
     @link.error
     async def link_error(self, ctx: commands.Context, error: Exception):
         if isinstance(error, commands.UserInputError):
-            await ctx.send(str(error))
+            #await ctx.send(str(error))
+            await ctx.send('```!login <Steam Profile URL> or <SteamID>```')
         traceback.print_exc()
 
     @commands.command(help='Command to set the server for the queue system. You must be in a voice channel.',

@@ -7,6 +7,7 @@ import socket
 import traceback
 import valve.rcon
 import valve.source.a2s
+import requests
 
 from bot import Discord_10man
 from databases import Database
@@ -19,7 +20,7 @@ from utils.csgo_server import CSGOServer
 from utils.veto_image import VetoImage
 
 # TODO: Allow administrators to update the maplist
-active_map_pool = ['de_inferno', 'de_train', 'de_mirage', 'de_nuke', 'de_overpass', 'de_dust2', 'de_vertigo']
+active_map_pool = ['de_inferno', 'de_train', 'de_mirage', 'de_nuke', 'de_overpass', 'de_dust2', 'de_vertigo', 'de_cache']
 reserve_map_pool = ['de_cache', 'de_cbble', 'cs_office', 'cs_agency']
 current_map_pool = active_map_pool.copy()
 
@@ -35,7 +36,7 @@ class CSGO(commands.Cog):
         self.veto_image = veto_image
         self.readied_up: bool = False
 
-    @commands.command(aliases=['10man', 'setup'],
+    @commands.command(aliases=['10man', 'setup','start','ready'],
                       help='This command takes the users in a voice channel and selects two random '
                            'captains. It then allows those captains to select the members of their '
                            'team in a 1 2 2 2 1 fashion. It then configures the server with the '
@@ -76,7 +77,7 @@ class CSGO(commands.Cog):
         current_captain = team1_captain
         player_veto_count = 0
 
-        message = await ctx.send('10 man time\nLoading player selection...')
+        message = await ctx.send('**```Loading player selection...```**')
         for emoji in emojis:
             await message.add_reaction(emoji)
 
@@ -93,8 +94,8 @@ class CSGO(commands.Cog):
                 message_text += f'<@{team2_captain.id}>'
                 current_captain = team2_captain
 
-            message_text += f' select {player_veto[player_veto_count]}\n'
-            message_text += 'You have 60 seconds to choose your player(s)\n'
+            message_text += f' **`select {player_veto[player_veto_count]} player(s)`**\n'
+            message_text += 'You have 30 seconds to choose your player(s)\n'
 
             i = 0
             for player in players:
@@ -131,8 +132,8 @@ class CSGO(commands.Cog):
 
                 seconds += 1
 
-                if seconds % 60 == 0:
-                    for _ in range(0, player_veto[player_veto_count]):
+                if seconds % 30 == 0:
+                    for x in range(0, player_veto[player_veto_count]):
                         index = randint(0, len(players) - 1)
                         if current_team_player_select == 1:
                             team1.append(players[index])
@@ -163,9 +164,9 @@ class CSGO(commands.Cog):
         team2_steamIDs = []
 
         team1_channel = await ctx.author.voice.channel.category.create_voice_channel(
-            name=f'team_{team1_captain.display_name}', user_limit=7)
+            name=f'Team_{team1_captain.display_name}', user_limit=5)
         team2_channel = await ctx.author.voice.channel.category.create_voice_channel(
-            name=f'team_{team2_captain.display_name}', user_limit=7)
+            name=f'Team_{team2_captain.display_name}', user_limit=5)
 
         for player in team1:
             await player.move_to(channel=team1_channel, reason=f'You are on {team1_captain}\'s Team')
@@ -193,15 +194,15 @@ class CSGO(commands.Cog):
             'players_per_team': len(team2),
             'min_players_to_ready': 1,
             'team1': {
-                'name': f'team_{team1_captain.display_name}',
+                'name': f'Team_{team1_captain.display_name}',
                 'tag': 'team1',
-                'flag': 'IE',
+                'flag': 'AU',
                 'players': team1_steamIDs
             },
             'team2': {
-                'name': f'team_{team2_captain.display_name}',
+                'name': f'Team_{team2_captain.display_name}',
                 'tag': 'team2',
-                'flag': 'IE',
+                'flag': 'AU',
                 'players': team2_steamIDs
             },
             'cvars': {
@@ -226,10 +227,11 @@ class CSGO(commands.Cog):
         await asyncio.sleep(5)
         connect_embed = await self.connect_embed(csgo_server)
         await ctx.send(embed=connect_embed)
-        score_embed = discord.Embed()
+        #general_channel = ctx._get_channel(702908501533655203)
+        score_embed = discord.Embed(title='Match in Progress', color=0x00FF00)
         score_embed.add_field(name='0', value=f'team_{team1_captain.display_name}', inline=True)
         score_embed.add_field(name='0', value=f'team_{team2_captain.display_name}', inline=True)
-        score_message = await ctx.send('Match in Progress', embed=score_embed)
+        score_message = await ctx.send(embed=score_embed)
 
         csgo_server.get_context(ctx=ctx, channels=[channel_original, team1_channel, team2_channel],
                                 players=team1 + team2, score_message=score_message)
@@ -258,7 +260,7 @@ class CSGO(commands.Cog):
                 team2_text += ' 👑'
             team2_text += '\n'
 
-        embed = discord.Embed()
+        embed = discord.Embed(color=0x03f0fc)
         embed.add_field(name=f'Team {team1_captain.display_name}', value=team1_text, inline=True)
         embed.add_field(name='Players', value=players_text, inline=True)
         embed.add_field(name=f'Team {team2_captain.display_name}', value=team2_text, inline=True)
@@ -299,7 +301,7 @@ class CSGO(commands.Cog):
             img_message = await temp_channel.send(file=attachment)
 
             embed = discord.Embed(title='__Map veto__',
-                                  color=discord.Colour(0x650309))
+                                  color=discord.Colour(0x03f0fc))
             embed.set_image(url=img_message.attachments[0].url)
             embed.set_footer(text=f'It is now {current_team_captain}\'s turn to veto',
                              icon_url=current_team_captain.avatar_url)
@@ -356,7 +358,7 @@ class CSGO(commands.Cog):
             image_message = await temp_channel.send(file=attachment)
             chosen_map_image_url = image_message.attachments[0].url
             map_chosen_embed = discord.Embed(title=f'The chosen map is ```{chosen_map}```',
-                                             color=discord.Colour(0x650309))
+                                             color=discord.Colour(0x03f0fc))
             map_chosen_embed.set_image(url=chosen_map_image_url)
 
             return map_chosen_embed
@@ -367,7 +369,7 @@ class CSGO(commands.Cog):
         current_team_captain = choice((team1_captain, team2_captain))
 
         current_category = ctx.channel.category
-        temp_channel = await ctx.guild.create_text_channel('temp', category=current_category)
+        temp_channel = await ctx.guild.create_text_channel('testing', category=current_category)
 
         self.veto_image.construct_veto_image(map_list, veto_image_fp,
                                              is_vetoed=is_vetoed, spacing=25)
@@ -414,7 +416,8 @@ class CSGO(commands.Cog):
                 available = True
                 break
         if len(self.bot.queue_voice_channel.members) >= 10 & available:
-            embed = discord.Embed()
+            embed = discord.Embed(color=0x03f0fc)
+            await self.bot.queue_ctx.channel.purge(limit=100)
             embed.add_field(name='You have 60 seconds to ready up!', value='Ready: ✅', inline=False)
             ready_up_message = await self.bot.queue_ctx.send(embed=embed)
             await ready_up_message.add_reaction('✅')
@@ -476,14 +479,14 @@ class CSGO(commands.Cog):
         with valve.source.a2s.ServerQuerier((csgo_server.server_address, csgo_server.server_port),
                                             timeout=20) as server:
             info = server.info()
-        embed = discord.Embed(title=info['server_name'], color=0xf4c14e)
+        embed = discord.Embed(title=info['server_name'], color=0x00FF00)
         embed.set_thumbnail(
-            url="https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/730/69f7ebe2735c366c65c0b33dae00e12dc40edbe4.jpg")
-        embed.add_field(name='Quick Connect',
+            url="https://scontent.xx.fbcdn.net/v/t1.15752-9/119154591_373692013645493_2520568812144261390_n.png?_nc_cat=100&_nc_sid=ae9488&_nc_ohc=iVOCUJ0z9PwAX8wuYwM&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=754609b9ca33e2cad1dd41f4e03f6f27&oe=5F87528B")
+        embed.add_field(name='__**📡Quick Connect**__',
                         value=f'steam://connect/{csgo_server.server_address}:{csgo_server.server_port}/{csgo_server.server_password}',
                         inline=False)
-        embed.add_field(name='Console Connect',
-                        value=f'connect {csgo_server.server_address}:{csgo_server.server_port}; password {csgo_server.server_password}',
+        embed.add_field(name='__**📡Console Connect**__',
+                        value=f'```connect {csgo_server.server_address}:{csgo_server.server_port}; password {csgo_server.server_password}```',
                         inline=False)
         embed.add_field(name='Players', value=f'{info["player_count"]}/{info["max_players"]}', inline=True)
         embed.add_field(name='Map', value=info['map'], inline=True)

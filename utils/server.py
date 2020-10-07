@@ -1,4 +1,7 @@
 import discord
+import requests
+import json
+import valve.rcon
 import socket
 
 from aiohttp import web
@@ -44,6 +47,13 @@ class WebServer:
         request : web.Request
             AIOHTTP request object.
         """
+        with open('config.json') as config:
+
+                    json_data = json.load(config)
+                    dathost_username = str(json_data['dathost_user'])
+                    dathost_passwords = str(json_data['dathost_password'])
+                    dathost_server_ids = str(json_data['dathost_server_id'])
+                    #general_channel_ids = int(json_data['general_chat_id'])
 
         # or "Authorization"
         if request.method != 'POST':
@@ -60,6 +70,7 @@ class WebServer:
         # TODO: Create Checks for the JSON
 
         server = None
+
         for csgo_server in self.csgo_servers:
             if socket.gethostbyname(csgo_server.server_address) == request.remote:
                 server = csgo_server
@@ -80,9 +91,18 @@ class WebServer:
 
             elif get5_event['event'] == 'series_end' or get5_event['event'] == 'series_cancel':
                 if get5_event['event'] == 'series_end':
-                    await server.score_message.edit(content='Game Over')
+                    series_end_embed = discord.Embed(title='Match has Ended', color=0xff0000)
+                    await server.score_message.edit(embed=series_end_embed)
+
+                    valve.rcon.execute((csgo_server.server_address, csgo_server.server_port), csgo_server.RCON_password,
+                                        'sm_kick @all Match has Ended')
+
                 elif get5_event['event'] == 'series_cancel':
-                    await server.score_message.edit(content='Game Cancelled by Admin')
+                    series_cancel_embed = discord.Embed(title='Game Cancelled by Admin', color=0xff0000)
+                    await server.score_message.edit(embed=series_cancel_embed)
+
+                    valve.rcon.execute((csgo_server.server_address, csgo_server.server_port), csgo_server.RCON_password,
+                                        'sm_kick @all Game Cancelled by Admin')
 
                 if self.bot.cogs['CSGO'].pug.enabled:
                     for player in server.players:
@@ -92,7 +112,7 @@ class WebServer:
                 server.make_available()
                 self.csgo_servers.remove(server)
 
-        return _http_error_handler()
+        return _http_error_handler() 
 
     async def http_start(self) -> None:
         """

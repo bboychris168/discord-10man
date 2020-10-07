@@ -8,14 +8,14 @@ from utils.server import WebServer
 from utils.csgo_server import CSGOServer
 
 
-__version__ = '1.0.5'
-__dev__ = 745000319942918303
+__version__ = '1.0.4'
+__dev__ = 572166692545888288
 
 
 class Discord_10man(commands.Bot):
     def __init__(self, config: dict, startup_extensions: List[str]):
         # TODO: Change prefix to . when syncing
-        super().__init__(command_prefix='.', case_insensitive=True, description='A bot to run CSGO PUGS.',
+        super().__init__(command_prefix=['!','.'], case_insensitive=True, description='A bot to run CSGO PUGS.',
                          help_command=commands.DefaultHelpCommand(verify_checks=False))
         self.intents.members = True
         self.intents.presences = False
