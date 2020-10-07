@@ -226,6 +226,7 @@ class CSGO(commands.Cog):
         await asyncio.sleep(5)
         connect_embed = await self.connect_embed(csgo_server)
         await ctx.send(embed=connect_embed)
+        #general_channel = ctx._get_channel(702908501533655203)
         score_embed = discord.Embed(title='Match in Progress', color=0x00FF00)
         score_embed.add_field(name='0', value=f'team_{team1_captain.display_name}', inline=True)
         score_embed.add_field(name='0', value=f'team_{team2_captain.display_name}', inline=True)
@@ -409,7 +410,7 @@ class CSGO(commands.Cog):
     @tasks.loop(seconds=5.0)
     async def queue_check(self):
         if len(self.bot.queue_voice_channel.members) >= 1:
-            await self.bot.queue_text_channel.channel.purge(limit=100)
+            await self.bot.queue_ctx.channel.purge(limit=100) 
             embed = discord.Embed(color=0x03f0fc)
             embed.add_field(name='You have 60 seconds to ready up!', value='Ready: ✅', inline=False)
             ready_up_message = await self.bot.queue_ctx.send(embed=embed)

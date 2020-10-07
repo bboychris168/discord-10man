@@ -95,14 +95,14 @@ class WebServer:
                     await server.score_message.edit(embed=series_end_embed)
 
                     valve.rcon.execute((csgo_server.server_address, csgo_server.server_port), csgo_server.RCON_password,
-                                        'bot_kick @all Match has Ended')
+                                        'sm_kick @all Match has Ended')
 
                 elif get5_event['event'] == 'series_cancel':
                     series_cancel_embed = discord.Embed(title='Game Cancelled by Admin', color=0xff0000)
                     await server.score_message.edit(embed=series_cancel_embed)
 
                     valve.rcon.execute((csgo_server.server_address, csgo_server.server_port), csgo_server.RCON_password,
-                                        'bot_kick @all Game Cancelled by Admin')
+                                        'sm_kick @all Game Cancelled by Admin')
 
                 if self.bot.cogs['CSGO'].pug.enabled:
                     for player in server.players:
