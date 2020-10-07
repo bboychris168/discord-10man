@@ -18,6 +18,7 @@ from random import randint
 from typing import List
 from utils.csgo_server import CSGOServer
 from utils.veto_image import VetoImage
+import
 
 # TODO: Allow administrators to update the maplist
 active_map_pool = ['de_inferno', 'de_train', 'de_mirage', 'de_nuke', 'de_overpass', 'de_dust2', 'de_vertigo', 'de_cache']
