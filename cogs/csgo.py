@@ -416,7 +416,7 @@ class CSGO(commands.Cog):
                 break
         if len(self.bot.queue_voice_channel.members) >= 10 & available:
             embed = discord.Embed(color=0x03f0fc)
-            await self.bot.queue_check.channel.purge(limit=100)
+            await self.bot.queue_ctx.channel.purge(limit=100)
             embed.add_field(name='You have 60 seconds to ready up!', value='Ready: ✅', inline=False)
             ready_up_message = await self.bot.queue_ctx.send(embed=embed)
             await ready_up_message.add_reaction('✅')
