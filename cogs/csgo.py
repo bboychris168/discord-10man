@@ -58,8 +58,8 @@ class CSGO(commands.Cog):
         channel_original = ctx.author.voice.channel
         players: List[discord.Member] = ctx.author.voice.channel.members.copy()
         players = players[0: 13]
-        if self.bot.dev:
-            players = [ctx.author] * 10
+        """ if self.bot.dev:
+            players = [ctx.author] * 10 """
         emojis = emoji_bank.copy()
         del emojis[len(players) - 2:len(emojis)]
         emojis_selected = []

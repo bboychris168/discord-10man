@@ -9,4 +9,3 @@ config_file.close()
 
 discord_bot = bot.Discord_10man(config, startup_extensions)
 discord_bot.run()
-hi
