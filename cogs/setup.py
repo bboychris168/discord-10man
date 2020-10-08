@@ -28,8 +28,8 @@ class Setup(commands.Cog):
         await db.execute('''
                         REPLACE INTO users (discord_id, steam_id)
                         VALUES( :discord_id, :steam_id )
-                        ''', {"discord_id": str(ctx.author), "steam_id": str(steamID.as_steam2_zero)})
-        embed = discord.Embed(description=f'**Connected** {ctx.author.mention} \n `{steamID.as_steam2}` \n {steamID.invite_url}', color=0x00FF00)
+                        ''', {"discord_id": str(ctx.author.id), "steam_id": str(steamID.as_steam2_zero)})
+        embed = discord.Embed(description=f'Connected {ctx.author.mention} \n `{steamID.as_steam2}`', color=0x00FF00)
         await ctx.send(embed=embed)
     
     @link.error
