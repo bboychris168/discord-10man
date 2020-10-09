@@ -64,7 +64,7 @@ class Utils(commands.Cog):
             if self.bot.version < json['tag_name'][1:]:
                 embed = discord.Embed(title=f'Discord 10man Update {json["tag_name"]}', url=json["html_url"])
                 embed.set_thumbnail(
-                    url="https://repository-images.githubusercontent.com/286741783/1df5e700-e141-11ea-9fbc-338769809f24")
+                    url="https://scontent.xx.fbcdn.net/v/t1.15752-9/119154591_373692013645493_2520568812144261390_n.png?_nc_cat=100&_nc_sid=ae9488&_nc_ohc=iVOCUJ0z9PwAX8wuYwM&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=754609b9ca33e2cad1dd41f4e03f6f27&oe=5F87528B")
                 embed.add_field(name='Release Notes', value=f'{json["body"]}', inline=False)
                 embed.add_field(name='Download', value=f'{json["html_url"]}', inline=False)
                 owner: discord.Member = (await self.bot.application_info()).owner
