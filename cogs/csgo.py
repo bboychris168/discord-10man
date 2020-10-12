@@ -58,8 +58,8 @@ class CSGO(commands.Cog):
         channel_original = ctx.author.voice.channel
         players: List[discord.Member] = ctx.author.voice.channel.members.copy()
         players = players[0: 13]
-        """ if self.bot.dev:
-            players = [ctx.author] * 10 """
+        if self.bot.dev:
+            players = [ctx.author] * 10
         emojis = emoji_bank.copy()
         del emojis[len(players) - 2:len(emojis)]
         emojis_selected = []
@@ -214,7 +214,8 @@ class CSGO(commands.Cog):
             json.dump(match_config, outfile, ensure_ascii=False, indent=4)
 
         match_config_json = await ctx.send(file=discord.File('match_config.json', '../match_config.json'))
-        await ctx.send('If you are coaching, once you join the server, type .coach')
+        #await ctx.send('If you are coaching, once you join the server, type .coach')
+        embed = discord.Embed(description='Server is being configured', color=0x00FF00)
         loading_map_message = await ctx.send('Server is being configured')
         await asyncio.sleep(0.3)
         valve.rcon.execute((csgo_server.server_address, csgo_server.server_port), csgo_server.RCON_password,
