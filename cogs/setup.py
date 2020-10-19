@@ -36,7 +36,7 @@ class Setup(commands.Cog):
     async def link_error(self, ctx: commands.Context, error: Exception):
         if isinstance(error, commands.UserInputError):
             #await ctx.send(str(error))
-            embed = discord.Embed(description='!login `<Steam Profile URL>` or `<SteamID>`', color=0xff0000)
+            embed = discord.Embed(description='!login `<Steam Profile Name>` or `<Steam Profile URL>` or `<SteamID>`', color=0xff0000)
             await ctx.send(embed=embed)
         traceback.print_exc()
 

@@ -111,11 +111,13 @@ class WebServer:
 
                 elif get5_event['event'] == 'series_end' or get5_event['event'] == 'series_cancel':
                     if get5_event['event'] == 'series_end':
-                        await server.score_message.edit(content='Game Over')
+                        series_end_embed = discord.Embed(description='Game Over', color=0xff0000)
+                        await server.score_message.edit(embed=series_end_embed)
                         valve.rcon.execute((csgo_server.server_address, csgo_server.server_port), csgo_server.RCON_password,
                                         'sm_kick @all Match has Ended')
                     elif get5_event['event'] == 'series_cancel':
-                        await server.score_message.edit(content='Game Cancelled by Admin')
+                        series_cancelled_embed = discord.Embed(description='Game Cancelled by Admin', color=0xff0000)
+                        await server.score_message.edit(embed=series_cancelled_embed)
                         valve.rcon.execute((csgo_server.server_address, csgo_server.server_port), csgo_server.RCON_password,
                                         'sm_kick @all Game Cancelled by Admin')
 
