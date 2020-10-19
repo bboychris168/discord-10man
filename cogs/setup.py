@@ -40,7 +40,8 @@ class Setup(commands.Cog):
             await ctx.send(embed=embed)
         traceback.print_exc()
 
-    @commands.command(help='Command to set the server for the queue system. You must be in a voice channel.',
+    @commands.command(aliases=['setupqueue'],
+                      help='Command to set the server for the queue system. You must be in a voice channel.',
                       brief='Set\'s the server for the queue')
     @commands.check(checks.voice_channel)
     async def setup_queue(self, ctx: commands.Context, enabled: bool = False):
@@ -82,7 +83,8 @@ class Setup(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def RCON_unban(self, ctx: commands.Context):
         for server in self.bot.servers:
-            unban = valve.rcon.execute((server.server_address, server.server_port), server.RCON_password, 'removeallids')
+            unban = valve.rcon.execute((server.server_address, server.server_port), server.RCON_password,
+                                       'removeallids')
             print(f'Server #{server.id} | {unban}')
 
     @RCON_unban.error
