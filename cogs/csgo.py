@@ -417,7 +417,7 @@ class CSGO(commands.Cog):
 
     @tasks.loop(seconds=5.0)
     async def queue_check(self):
-        print(self.bot.queue_voice_channel.members)
+        #print(self.bot.queue_voice_channel.members)
         available: bool = False
         for server in self.bot.servers:
             if server.available:

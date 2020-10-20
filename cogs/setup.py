@@ -57,7 +57,6 @@ class Setup(commands.Cog):
             self.bot.cogs['CSGO'].queue_check.stop()
             self.bot.cogs['CSGO'].pug.enabled = True
         embed = discord.Embed(description=f'{self.bot.queue_ctx.author.voice.channel} is the queue channel.\n'
-        await ctx.send(embed=embed)
             f'Queue is {"enabled" if enabled else "disabled"}.\n'
             f'Pug Command is {"enabled" if not enabled else "disabled"}.')
         await ctx.send(embed=embed)
