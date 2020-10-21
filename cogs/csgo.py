@@ -334,6 +334,7 @@ class CSGO(commands.Cog):
         '''
         veto_image_fp = 'result.png'
         base_url = f'http://{self.bot.bot_IP}:{self.bot.web_server.port}'
+        print(base_url)
 
         chosen_map_file_name = chosen_map + self.veto_image.image_extension
         chosen_map_fp = os.path.join(
