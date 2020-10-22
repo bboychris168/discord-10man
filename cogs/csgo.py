@@ -8,7 +8,6 @@ import socket
 import traceback
 import valve.rcon
 import valve.source.a2s
-import requests
 
 from bot import Discord_10man
 from databases import Database
@@ -251,13 +250,13 @@ class CSGO(commands.Cog):
             'team1': {
                 'name': f'Team_{team1_captain.display_name}',
                 'tag': 'team1',
-                'flag': 'AU',
+                'flag': 'IE',
                 'players': team1_steamIDs
             },
             'team2': {
                 'name': f'Team_{team2_captain.display_name}',
                 'tag': 'team2',
-                'flag': 'AU',
+                'flag': 'IE',
                 'players': team2_steamIDs
             },
             'cvars': {
@@ -324,7 +323,6 @@ class CSGO(commands.Cog):
     async def get_chosen_map_embed(self, chosen_map, session=aiohttp.ClientSession()):
         ''' Returns a :class:`discord.Embed` which contains an image of
         the map chosen on completion of the veto. closes the session passed.
-
         Parameters
         -----------
         chosen_map: :class:`str`
@@ -334,7 +332,6 @@ class CSGO(commands.Cog):
         '''
         veto_image_fp = 'result.png'
         base_url = f'http://{self.bot.bot_IP}:{self.bot.web_server.port}'
-        print(base_url)
 
         chosen_map_file_name = chosen_map + self.veto_image.image_extension
         chosen_map_fp = os.path.join(
@@ -354,10 +351,8 @@ class CSGO(commands.Cog):
     async def map_veto(self, ctx: commands.Context, team1_captain, team2_captain):
         '''Returns :class:`list` of :class:`str` which is the remaining map
         after the veto
-
         Embed image updates as the maps are vetoed. The team captains can
         veto a map by reacting to the map number to be vetoed
-
         Parameters
         -----------
         ctx: :class:`discord.Context`
@@ -375,7 +370,6 @@ class CSGO(commands.Cog):
         async def get_embed(current_team_captain):
             ''' Returns :class:`discord.Embed` which contains the map veto
             image and the current team captain who has to make a veto
-
             Parameters
             -----------
             current_team_captain: :class:`discord.Member`
@@ -394,7 +388,6 @@ class CSGO(commands.Cog):
         async def add_reactions(message, num_maps):
             ''' Adds the number emoji reactions to the message. This is used
             to select the veto map
-
             Parameters
             -----------
             message: :class:`discord.Message`
@@ -408,7 +401,6 @@ class CSGO(commands.Cog):
 
         async def get_next_map_veto(message, current_team_captain):
             ''' Obtains the next map which was vetoed
-
             Parameters
             -----------
             message: :class:`discord.Message`
@@ -465,7 +457,7 @@ class CSGO(commands.Cog):
 
     @tasks.loop(seconds=5.0)
     async def queue_check(self):
-        #print(self.bot.queue_voice_channel.members)
+        print(self.bot.queue_voice_channel.members)
         available: bool = False
         for server in self.bot.servers:
             if server.available:
@@ -537,7 +529,7 @@ class CSGO(commands.Cog):
 
         embed = discord.Embed(title=info['server_name'], color=0x00FF00)
         embed.set_thumbnail(
-            url="https://scontent.xx.fbcdn.net/v/t1.15752-9/119154591_373692013645493_2520568812144261390_n.png?_nc_cat=100&_nc_sid=ae9488&_nc_ohc=iVOCUJ0z9PwAX8wuYwM&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=754609b9ca33e2cad1dd41f4e03f6f27&oe=5F87528B")
+            url="https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/730/69f7ebe2735c366c65c0b33dae00e12dc40edbe4.jpg")
         embed.add_field(name='__**📡Quick Connect**__',
                         value=f'steam://connect/{csgo_server.server_address}:{csgo_server.server_port}/{csgo_server.server_password}',
                         inline=False)
