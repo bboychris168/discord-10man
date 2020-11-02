@@ -10,7 +10,7 @@ from utils.csgo_server import CSGOServer
 
 __version__ = '1.2.1'
 __dev__ = 572166692545888288
-
+#__dev__ = 0
 class Discord_10man(commands.Bot):
     def __init__(self, config: dict, startup_extensions: List[str]):
         # TODO: Change prefix to . when syncing
