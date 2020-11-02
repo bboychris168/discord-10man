@@ -8,9 +8,9 @@ from utils.server import WebServer
 from utils.csgo_server import CSGOServer
 
 
-__version__ = '1.2.1'
+__version__ = '1.3.0-beta'
 __dev__ = 572166692545888288
-#__dev__ = 0
+
 class Discord_10man(commands.Bot):
     def __init__(self, config: dict, startup_extensions: List[str]):
         # TODO: Change prefix to . when syncing
@@ -27,6 +27,8 @@ class Discord_10man(commands.Bot):
         self.bot_IP: str = config['bot_IP']
         self.steam_web_api_key = config['steam_web_API_key']
         self.servers: List[CSGOServer] = []
+        # Will need to change for when there is multiple server queue
+        self.users_not_ready: List[discord.Member] = []
         for i, server in enumerate(config['servers']):
             self.servers.append(
                 CSGOServer(i, server['server_address'], server['server_port'], server['server_password'],
