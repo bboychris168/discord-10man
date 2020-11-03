@@ -10,6 +10,7 @@ import valve.rcon
 import valve.source.a2s
 
 from bot import Discord_10man
+from collections import Counter
 from databases import Database
 from datetime import date
 from discord.ext import commands, tasks
@@ -26,8 +27,13 @@ current_map_pool = active_map_pool.copy()
 
 emoji_bank = ['0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟']
 
-# Veto style 1 2 2 2 1, last two 1s are for if we are playing with coaches
-player_veto = [1, 2, 2, 2, 1, 1, 1]
+# Veto style 1 2 2 2 1 1 1, last two 1s are for if we are playing with coaches
+
+
+EU_ISO = ['AT', 'BE', 'BG', 'HR', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'NL',
+          'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE']
+
+CIS_ISO = ['BY', 'KZ', 'RU', 'UA']
 
 
 class CSGO(commands.Cog):
@@ -75,6 +81,12 @@ class CSGO(commands.Cog):
                             raise commands.CommandError(message=f'You can only set 2 captains.')
                 else:
                     raise commands.CommandError(message=f'Invalid Argument: `{arg}`')
+
+        if not self.pug.enabled:
+            if len(self.bot.queue_captains) > 0:
+                team1_captain_arg = self.bot.queue_captains.pop(0)
+            if len(self.bot.queue_captains) > 0:
+                team2_captain_arg = self.bot.queue_captains.pop(0)
 
         # TODO: Refactor this mess
         db = Database('sqlite:///main.sqlite')
@@ -127,11 +139,21 @@ class CSGO(commands.Cog):
             current_captain = team1_captain
             player_veto_count = 0
 
-            message = await ctx.send('10 man time\nLoading player selection...')
+            message = await ctx.send(f'{self.bot.match_size} man time\nLoading player selection...')
             for emoji in emojis:
                 await message.add_reaction(emoji)
 
             emoji_remove = []
+
+            player_veto = []
+            if self.bot.match_size == 2:
+                player_veto = [1, 1]
+            for i in range(self.bot.match_size - 2):
+                if i == 0 or i == self.bot.match_size - 3:
+                    player_veto.append(1)
+                elif i % 2 == 0:
+                    player_veto.append(2)
+            player_veto = player_veto + [1, 1]
 
             while len(players) > 0:
                 message_text = ''
@@ -219,6 +241,7 @@ class CSGO(commands.Cog):
 
         team1_steamIDs = []
         team2_steamIDs = []
+        spectator_steamIDs = []
 
         if ctx.author.voice.channel.category is None:
             team1_channel = await ctx.guild.create_voice_channel(name=f'team_{team1_captain.display_name}',
@@ -243,6 +266,12 @@ class CSGO(commands.Cog):
                                       {"player": str(player.id)})
             team2_steamIDs.append(data[0])
 
+        if len(self.bot.spectators) > 0:
+            for spec in self.bot.spectators:
+                data = await db.fetch_one('SELECT steam_id FROM users WHERE discord_id = :spectator',
+                                          {"spectator": str(spec.id)})
+                spectator_steamIDs.append(data[0])
+
         if map_arg is None:
             map_list = await self.map_veto(ctx, team1_captain, team2_captain)
         else:
@@ -254,16 +283,47 @@ class CSGO(commands.Cog):
 
         team1_country = 'IE'
         team2_country = 'IE'
+
+        team1_flags = []
+        team2_flags = []
+
+        team1_flag_request = ''
+        team2_flag_request = ''
+
+        for player in team1_steamIDs:
+            team1_flag_request += SteamID(player).__str__() + ','
+        team1_flag_request = team1_flag_request[:-1]
+
+        for player in team2_steamIDs:
+            team2_flag_request += SteamID(player).__str__() + ','
+        team2_flag_request = team2_flag_request[:-1]
+
         session = aiohttp.ClientSession()
-        async with session.get(f'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/'
+        async with session.get(f'https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/'
                                f'?key={self.bot.steam_web_api_key}'
-                               f'&steamids={SteamID(team1_steamIDs[0]).as_64},{SteamID(team2_steamIDs[0]).as_64}') as resp:
-            captain_info = await resp.json()
-            if 'loccountrycode' in captain_info['response']['players'][0]:
-                team1_country = captain_info['response']['players'][0]['loccountrycode']
-            if 'loccountrycode' in captain_info['response']['players'][1]:
-                team2_country = captain_info['response']['players'][1]['loccountrycode']
-        await session.close()
+                               f'&steamids={team1_flag_request}') as resp:
+            player_info = await resp.json()
+            for player in player_info['response']['players']:
+                if 'loccountrycode' in player:
+                    team1_flags.append(player['loccountrycode'])
+            await session.close()
+
+        session = aiohttp.ClientSession()
+        async with session.get(f'https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/'
+                               f'?key={self.bot.steam_web_api_key}'
+                               f'&steamids={team2_flag_request}') as resp:
+            player_info = await resp.json()
+            for player in player_info['response']['players']:
+                if 'loccountrycode' in player:
+                    team2_flags.append(player['loccountrycode'])
+            await session.close()
+
+        # TODO: Add check for EU/CIS flag
+        if len(team1_flags) > 0:
+            team1_country = Counter(team1_flags).most_common(1)[0][0]
+        if len(team2_flags) > 0:
+            team2_country = Counter(team2_flags).most_common(1)[0][0]
+
 
         match_config = {
             'matchid': f'PUG-{date.today().strftime("%d-%B-%Y")}',
@@ -272,8 +332,9 @@ class CSGO(commands.Cog):
             'skip_veto': True,
             'veto_first': 'team1',
             'side_type': 'always_knife',
-            'players_per_team': len(team2),
+            'players_per_team': self.bot.match_size,
             'min_players_to_ready': 1,
+            'spectators': spectator_steamIDs,
             'team1': {
                 'name': f'Team_{team1_captain.display_name}',
                 'tag': 'team1',
@@ -307,9 +368,12 @@ class CSGO(commands.Cog):
 
         await asyncio.sleep(5)
         connect_embed = await self.connect_embed(csgo_server)
-        await ctx.send(embed=connect_embed)
-        #general_channel = ctx._get_channel(702908501533655203)
-        score_embed = discord.Embed(title='Match in Progress', color=0x00FF00)
+        if self.bot.connect_dm:
+            for player in team1 + team2 + self.bot.spectators:
+                await player.send(embed=connect_embed)
+        else:
+            await ctx.send(embed=connect_embed)
+        score_embed = discord.Embed()
         score_embed.add_field(name='0', value=f'team_{team1_captain.display_name}', inline=True)
         score_embed.add_field(name='0', value=f'team_{team2_captain.display_name}', inline=True)
         score_message = await ctx.send(embed=score_embed)
@@ -411,7 +475,7 @@ class CSGO(commands.Cog):
             path = (await response.json())['path']
             url = base_url + path
             embed.set_image(url=url)
-            embed.set_footer(text=f'It is now {current_team_captain}\'s turn to veto',
+            embed.set_footer(text=f'It is now {current_team_captain}\'s turn to veto | You have 60 seconds',
                              icon_url=current_team_captain.avatar_url)
             return embed
 
@@ -429,7 +493,7 @@ class CSGO(commands.Cog):
             for index in range(1, num_maps + 1):
                 await message.add_reaction(emoji_bank[index])
 
-        async def get_next_map_veto(message, current_team_captain):
+        async def get_next_map_veto(message, current_team_captain, is_vetoed):
             ''' Obtains the next map which was vetoed
             Parameters
             -----------
@@ -440,8 +504,14 @@ class CSGO(commands.Cog):
             '''
 
             check = lambda reaction, user: reaction.emoji in emoji_bank and user == current_team_captain
-            (reaction, _) = await self.bot.wait_for('reaction_add', check=check)
-            index = emoji_bank.index(reaction.emoji) - 1
+            index = -1
+            try:
+                (reaction, _) = await self.bot.wait_for('reaction_add', check=check, timeout=60.0)
+            except asyncio.TimeoutError:
+                validIndexes = [i for i in range(len(is_vetoed)) if not is_vetoed[i]]
+                index = choice(validIndexes)
+            else:
+                index = emoji_bank.index(reaction.emoji) - 1
 
             return map_list[index]
 
@@ -460,7 +530,7 @@ class CSGO(commands.Cog):
         while num_maps_left > 1:
             message = await ctx.fetch_message(message.id)
 
-            map_vetoed = await get_next_map_veto(message, current_team_captain)
+            map_vetoed = await get_next_map_veto(message, current_team_captain, is_vetoed)
             vetoed_map_index = map_list.index(map_vetoed)
             is_vetoed[vetoed_map_index] = True
 
@@ -487,13 +557,13 @@ class CSGO(commands.Cog):
 
     @tasks.loop(seconds=5.0)
     async def queue_check(self):
-        print(self.bot.queue_voice_channel.members)
+
         available: bool = False
         for server in self.bot.servers:
             if server.available:
                 available = True
                 break
-        if (len(self.bot.queue_voice_channel.members) >= 10 or (self.bot.dev and len(self.bot.queue_voice_channel.members) >= 1)) and available:
+        if (len(self.bot.queue_voice_channel.members) >= self.bot.match_size or (self.bot.dev and len(self.bot.queue_voice_channel.members) >= 1)) and available:
             embed = discord.Embed(color=0x03f0fc)
             await self.bot.queue_ctx.channel.purge(limit=100)
             embed.add_field(name='You have 60 seconds to ready up!', value='Ready: ✅', inline=False)
@@ -507,7 +577,7 @@ class CSGO(commands.Cog):
     async def ready_up(self, message: discord.Message, members: List[discord.Member]):
         message = await self.bot.queue_ctx.fetch_message(message.id)
 
-        # TODO: Add check for only the first 10 users
+        # TODO: Add check for only the first self.bot.match_size users
         check_emoji = None
         for reaction in message.reactions:
             if reaction.emoji == '✅':
@@ -520,7 +590,8 @@ class CSGO(commands.Cog):
             if member not in user_reactions:
                 ready = False
             else:
-                self.bot.users_not_ready.remove(member)
+                if member in self.bot.users_not_ready:
+                    self.bot.users_not_ready.remove(member)
 
         if ready:
             self.readied_up = True

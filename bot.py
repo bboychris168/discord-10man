@@ -8,7 +8,7 @@ from utils.server import WebServer
 from utils.csgo_server import CSGOServer
 
 
-__version__ = '1.3.0-beta'
+__version__ = '1.5.1-beta'
 __dev__ = 572166692545888288
 
 class Discord_10man(commands.Bot):
@@ -38,6 +38,10 @@ class Discord_10man(commands.Bot):
         self.version: str = __version__
         self.queue_ctx: commands.Context = None
         self.queue_voice_channel: discord.VoiceChannel = None
+        self.match_size = 10
+        self.spectators: List[discord.Member] = []
+        self.connect_dm = False
+        self.queue_captains: List[discord.Member] = []
 
         logger = logging.getLogger('discord')
         logger.setLevel(logging.DEBUG)
