@@ -8,7 +8,7 @@ from utils.server import WebServer
 from utils.csgo_server import CSGOServer
 
 
-__version__ = '1.5.2-beta'
+__version__ = '1.5.4-beta'
 __dev__ = 572166692545888288
 
 class Discord_10man(commands.Bot):
