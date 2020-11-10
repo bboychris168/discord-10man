@@ -5,6 +5,7 @@ import valve.rcon
 import socket
 import traceback
 import uuid
+import valve.rcon
 
 from aiohttp import web
 from json import JSONDecodeError
@@ -136,10 +137,16 @@ class WebServer:
                         valve.rcon.execute((csgo_server.server_address, csgo_server.server_port), csgo_server.RCON_password,
                                         'sm_kick @all Match has Ended')
                     elif get5_event['event'] == 'series_cancel':
-                        series_cancelled_embed = discord.Embed(description='Game Cancelled by Admin', color=0xff0000)
+
+                        """ series_cancelled_embed = discord.Embed(description='Game Cancelled by Admin', color=0xff0000)
                         await server.score_message.edit(embed=series_cancelled_embed)
                         valve.rcon.execute((csgo_server.server_address, csgo_server.server_port), csgo_server.RCON_password,
-                                        'sm_kick @all Game Cancelled by Admin')
+                                        'sm_kick @all Game Cancelled by Admin') """
+                                        
+                        await server.score_message.edit(content='Game Cancelled by Admin')
+                        # Temporary fix, Get5 breaks on a series cancel unless map changes
+                        valve.rcon.execute((server.server_address, server.server_port), server.RCON_password,
+                                           'changelevel de_mirage')
 
                     score_embed: discord.Embed = server.score_message.embeds[0]
                     score_embed.set_footer(text='🟥 Ended')
