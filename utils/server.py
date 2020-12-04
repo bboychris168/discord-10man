@@ -145,7 +145,8 @@ class WebServer:
                         await server.score_message.edit(embed=series_cancelled_embed) """
                         
                         self.logger.info(f'ServerID={server.id} | Admin Cancelled Match')
-                        await server.score_message.edit(content='Game Cancelled by Admin')
+                        series_cancelled_embed = discord.Embed(description='Game Cancelled by Admin', color=0xff000)
+                        await server.score_message.edit(embed=series_cancelled_embed)
                         # Temporary fix, Get5 breaks on a series cancel unless map changes
                         valve.rcon.execute((server.server_address, server.server_port), server.RCON_password,
                                            'sm_map de_mirage')
