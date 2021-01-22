@@ -309,8 +309,8 @@ class CSGO(commands.Cog):
         if self.bot.bot_IP != '':
             bot_ip = self.bot.bot_IP
 
-        team1_country = 'IE'
-        team2_country = 'IE'
+        team1_country = 'AU'
+        team2_country = 'AU'
 
         team1_flags = []
         team2_flags = []
