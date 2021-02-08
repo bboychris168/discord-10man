@@ -93,8 +93,8 @@ class Utils(commands.Cog):
     async def about(self, ctx: commands.Context):
         self.logger.debug(f'{ctx.author}: {ctx.prefix}{ctx.invoked_with} {ctx.args[2:]}')
         embed = discord.Embed(color=0xff0000)
-        embed.add_field(name=f'Discord 10 Man Bot v{self.bot.version}',
-                        value=f'Built by <@125033487051915264> & <@282670937738969088>', inline=False)
+        embed.add_field(name=f'LINKGED.GG v{self.bot.version}',
+                        value=f'Built by <@378014902620520451>', inline=False)
         await ctx.send(embed=embed)
         self.logger.debug(f'{ctx.author} got bot about info.')
 

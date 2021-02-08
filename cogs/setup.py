@@ -20,6 +20,7 @@ class Setup(commands.Cog):
 
         self.logger.debug(f'Loaded {__name__}')
 
+
     @commands.command(aliases=['login'],
                       help='This command connects users steam account to the bot.',
                       brief='Connect your SteamID to the bot', usage='<SteamID or CommunityURL>')
@@ -290,7 +291,6 @@ class Setup(commands.Cog):
             await ctx.send('Only an administrator can force end a match.')
         else:
             self.logger.exception(f'{ctx.command} caused an exception')
-
 
 def setup(client):
     client.add_cog(Setup(client))

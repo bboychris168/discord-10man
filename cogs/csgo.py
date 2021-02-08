@@ -269,15 +269,15 @@ class CSGO(commands.Cog):
         spectator_steamIDs = {}
 
         if ctx.author.voice.channel.category is None:
-            team1_channel = await ctx.guild.create_voice_channel(name=f'team_{team1_captain.display_name}',
+            team1_channel = await ctx.guild.create_voice_channel(name=f'team {team1_captain.display_name}',
                                                                  user_limit=int(self.bot.match_size / 2) + 1)
-            team2_channel = await ctx.guild.create_voice_channel(name=f'team_{team2_captain.display_name}',
+            team2_channel = await ctx.guild.create_voice_channel(name=f'team {team2_captain.display_name}',
                                                                  user_limit=int(self.bot.match_size / 2) + 1)
         else:
             team1_channel = await ctx.author.voice.channel.category.create_voice_channel(
-                name=f'team_{team1_captain.display_name}', user_limit=int(self.bot.match_size / 2) + 1)
+                name=f'team {team1_captain.display_name}', user_limit=int(self.bot.match_size / 2) + 1)
             team2_channel = await ctx.author.voice.channel.category.create_voice_channel(
-                name=f'team_{team2_captain.display_name}', user_limit=int(self.bot.match_size / 2) + 1)
+                name=f'team {team2_captain.display_name}', user_limit=int(self.bot.match_size / 2) + 1)
 
         for player in team1:
             await player.move_to(channel=team1_channel, reason=f'You are on {team1_captain}\'s Team')
@@ -353,8 +353,8 @@ class CSGO(commands.Cog):
         if len(team2_flags) > 0:
             team2_country = Counter(team2_flags).most_common(1)[0][0]
 
-        team1_name = f'team_{unidecode(team1_captain.display_name)}'
-        team2_name = f'team_{unidecode(team2_captain.display_name)}'
+        team1_name = f'team {unidecode(team1_captain.display_name)}'
+        team2_name = f'team {unidecode(team2_captain.display_name)}'
 
         match_id = f'PUG_{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}'
 
@@ -729,7 +729,7 @@ class CSGO(commands.Cog):
         embed.add_field(name='Map', value=info['map'], inline=True)
         gotv = csgo_server.get_gotv()
         if gotv is not None:
-            embed.add_field(name='GOTV',
+            embed.add_field(name=':tv:GOTV',
                             value=f'connect {csgo_server.server_address}:{gotv}',
                             inline=False)
         return embed
@@ -780,11 +780,11 @@ class CSGO(commands.Cog):
                                       value=f'{server.team_names[1]}', inline=True)
                 gotv = server.get_gotv()
                 if gotv is None:
-                    score_embed.add_field(name='GOTV',
+                    score_embed.add_field(name=':tv:GOTV',
                                           value='Not Configured',
                                           inline=False)
                 else:
-                    score_embed.add_field(name='GOTV',
+                    score_embed.add_field(name=':tv:GOTV',
                                           value=f'connect {server.server_address}:{gotv}',
                                           inline=False)
                 score_embed.set_footer(text="🟢 Live")
