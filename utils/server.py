@@ -150,9 +150,6 @@ class WebServer:
                         # Temporary fix, Get5 breaks on a series cancel unless map changes
                         valve.rcon.execute((server.server_address, server.server_port), server.RCON_password,
                                            'sm_kick @all Admin Cancelled Match')
-                                           
-                        await asyncio.sleep(5)
-
                         valve.rcon.execute((server.server_address, server.server_port), server.RCON_password,
                                            'sm_map de_mirage')
 
