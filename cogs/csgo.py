@@ -393,9 +393,12 @@ class CSGO(commands.Cog):
         with open(f'./{match_id}.json', 'w') as outfile:
             json.dump(match_config, outfile, ensure_ascii=False, indent=4)
 
-        await ctx.send('If you are coaching, once you join the server, type .coach')
-        loading_map_message = await ctx.send('Server is being configured')
-        await asyncio.sleep(0.3)
+        #await ctx.send('If you are coaching, once you join the server, type .coach')
+        embed = discord.Embed(description='Server is being configured', color=discord.Color.light_grey())
+        loading_map_message = await ctx.send(embed=embed)
+        valve.rcon.execute((server.server_address, server.server_port), server.RCON_password,
+                                           'sm_map de_mirage')
+        await asyncio.sleep(10)
         get5_trigger = valve.rcon.execute((csgo_server.server_address, csgo_server.server_port),
                                           csgo_server.RCON_password,
                                           'exec triggers/get5')
@@ -735,7 +738,7 @@ class CSGO(commands.Cog):
         gotv = csgo_server.get_gotv()
         if gotv is not None:
             embed.add_field(name=':tv:GOTV',
-                            value=f'connect {csgo_server.server_address}:{gotv}',
+                            value=f'```connect {csgo_server.server_address}:{gotv}```',
                             inline=False)
         return embed
 
@@ -790,7 +793,7 @@ class CSGO(commands.Cog):
                                           inline=False)
                 else:
                     score_embed.add_field(name=':tv:GOTV',
-                                          value=f'connect {server.server_address}:{gotv}',
+                                          value=f'```connect {server.server_address}:{gotv}```',
                                           inline=False)
                 score_embed.set_footer(text="🟢 Live")
                 await ctx.send(embed=score_embed)

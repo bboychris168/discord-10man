@@ -41,7 +41,10 @@ class Setup(commands.Cog):
                         ''', {"discord_id": str(ctx.author.id), "steam_id": str(steamID.as_steam2_zero)})
         embed = discord.Embed(description=f'Connected {ctx.author.mention} \n `{steamID.as_steam2}`', color=0x00FF00)
         await ctx.send(embed=embed)
+        #add another way to add roles for the users after login.    
+        #await ctx.author.add_roles(ctx.guild.get_role(808304852676378624))
         self.logger.info(f'{ctx.author} connected to {steamID.as_steam2}')
+        
 
     @link.error
     async def link_error(self, ctx: commands.Context, error: Exception):
