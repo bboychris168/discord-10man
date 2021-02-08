@@ -269,15 +269,15 @@ class CSGO(commands.Cog):
         spectator_steamIDs = {}
 
         if ctx.author.voice.channel.category is None:
-            team1_channel = await ctx.guild.create_voice_channel(name=f'team {team1_captain.display_name}',
+            team1_channel = await ctx.guild.create_voice_channel(name=f'team_{team1_captain.display_name}',
                                                                  user_limit=int(self.bot.match_size / 2) + 1)
-            team2_channel = await ctx.guild.create_voice_channel(name=f'team {team2_captain.display_name}',
+            team2_channel = await ctx.guild.create_voice_channel(name=f'team_{team2_captain.display_name}',
                                                                  user_limit=int(self.bot.match_size / 2) + 1)
         else:
             team1_channel = await ctx.author.voice.channel.category.create_voice_channel(
-                name=f'team {team1_captain.display_name}', user_limit=int(self.bot.match_size / 2) + 1)
+                name=f'team_{team1_captain.display_name}', user_limit=int(self.bot.match_size / 2) + 1)
             team2_channel = await ctx.author.voice.channel.category.create_voice_channel(
-                name=f'team {team2_captain.display_name}', user_limit=int(self.bot.match_size / 2) + 1)
+                name=f'team_{team2_captain.display_name}', user_limit=int(self.bot.match_size / 2) + 1)
 
         for player in team1:
             await player.move_to(channel=team1_channel, reason=f'You are on {team1_captain}\'s Team')
@@ -353,8 +353,8 @@ class CSGO(commands.Cog):
         if len(team2_flags) > 0:
             team2_country = Counter(team2_flags).most_common(1)[0][0]
 
-        team1_name = f'team {unidecode(team1_captain.display_name)}'
-        team2_name = f'team {unidecode(team2_captain.display_name)}'
+        team1_name = f'team_{unidecode(team1_captain.display_name)}'
+        team2_name = f'team_{unidecode(team2_captain.display_name)}'
 
         match_id = f'PUG_{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}'
 
@@ -464,6 +464,7 @@ class CSGO(commands.Cog):
     async def get_chosen_map_embed(self, chosen_map, session=aiohttp.ClientSession()):
         ''' Returns a :class:`discord.Embed` which contains an image of
         the map chosen on completion of the veto. closes the session passed.
+
         Parameters
         -----------
         chosen_map: :class:`str`
@@ -494,8 +495,10 @@ class CSGO(commands.Cog):
     async def map_veto(self, ctx: commands.Context, team1_captain, team2_captain):
         '''Returns :class:`list` of :class:`str` which is the remaining map
         after the veto
+
         Embed image updates as the maps are vetoed. The team captains can
         veto a map by reacting to the map number to be vetoed
+
         Parameters
         -----------
         ctx: :class:`discord.Context`
@@ -513,6 +516,7 @@ class CSGO(commands.Cog):
         async def get_embed(current_team_captain):
             ''' Returns :class:`discord.Embed` which contains the map veto
             image and the current team captain who has to make a veto
+
             Parameters
             -----------
             current_team_captain: :class:`discord.Member`
@@ -531,6 +535,7 @@ class CSGO(commands.Cog):
         async def add_reactions(message, num_maps):
             ''' Adds the number emoji reactions to the message. This is used
             to select the veto map
+
             Parameters
             -----------
             message: :class:`discord.Message`
@@ -544,6 +549,7 @@ class CSGO(commands.Cog):
 
         async def get_next_map_veto(message, current_team_captain, is_vetoed):
             ''' Obtains the next map which was vetoed
+
             Parameters
             -----------
             message: :class:`discord.Message`
@@ -809,3 +815,4 @@ class CSGO(commands.Cog):
 def setup(client):
     veto_image_generator = VetoImage('images/map_images', 'images/x.png', 'png')
     client.add_cog(CSGO(client, veto_image_generator))
+    

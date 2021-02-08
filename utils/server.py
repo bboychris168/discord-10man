@@ -43,14 +43,7 @@ class WebServer:
         request : web.Request
             AIOHTTP request object.
         """
-        with open('config.json') as config:
-
-                    json_data = json.load(config)
-                    dathost_username = str(json_data['dathost_user'])
-                    dathost_passwords = str(json_data['dathost_password'])
-                    dathost_server_ids = str(json_data['dathost_server_id'])
-                    #general_channel_ids = int(json_data['general_chat_id'])
-
+        
         if request.method == 'GET':
             if request.path == '/match':
                 self.logger.debug(f'{request.remote} accessed {self.IP}:{self.port}/match')
@@ -134,16 +127,8 @@ class WebServer:
                         await server.score_message.edit(embed=series_end_embed)
                         valve.rcon.execute((csgo_server.server_address, csgo_server.server_port), csgo_server.RCON_password,
                                         'sm_kick @all Match has Ended')
-                    elif get5_event['event'] == 'series_cancel':
-                        
-                        """ series_cancelled_embed = discord.Embed(description='Game Cancelled by Admin', color=0xff0000)
-                        await server.score_message.edit(embed=series_cancelled_embed)
-                        valve.rcon.execute((csgo_server.server_address, csgo_server.server_port), csgo_server.RCON_password,
-                                        'sm_kick @all Game Cancelled by Admin')
 
-                        series_cancelled_embed = discord.Embed(description='Game Cancelled by Admin', color=0xff0000)
-                        await server.score_message.edit(embed=series_cancelled_embed) """
-                        
+                    elif get5_event['event'] == 'series_cancel':
                         self.logger.info(f'ServerID={server.id} | Admin Cancelled Match')
                         series_cancelled_embed = discord.Embed(description='Game Cancelled by Admin', color=0xff000)
                         await server.score_message.edit(embed=series_cancelled_embed)

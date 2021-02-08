@@ -20,7 +20,6 @@ class Setup(commands.Cog):
 
         self.logger.debug(f'Loaded {__name__}')
 
-
     @commands.command(aliases=['login'],
                       help='This command connects users steam account to the bot.',
                       brief='Connect your SteamID to the bot', usage='<SteamID or CommunityURL>')
@@ -44,7 +43,6 @@ class Setup(commands.Cog):
         #add another way to add roles for the users after login.    
         #await ctx.author.add_roles(ctx.guild.get_role(808304852676378624))
         self.logger.info(f'{ctx.author} connected to {steamID.as_steam2}')
-        
 
     @link.error
     async def link_error(self, ctx: commands.Context, error: Exception):
@@ -296,4 +294,4 @@ class Setup(commands.Cog):
             self.logger.exception(f'{ctx.command} caused an exception')
 
 def setup(client):
-    client.add_cog(Setup(client))
+    client.add_cog(Setup(client)
