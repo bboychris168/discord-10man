@@ -397,7 +397,7 @@ class CSGO(commands.Cog):
         embed = discord.Embed(description='Server is being configured', color=discord.Color.light_grey())
         loading_map_message = await ctx.send(embed=embed)
         valve.rcon.execute((server.server_address, server.server_port), server.RCON_password,
-                                           'sm_map de_mirage')
+                                           'sm_map de_office')
         await asyncio.sleep(10)
         get5_trigger = valve.rcon.execute((csgo_server.server_address, csgo_server.server_port),
                                           csgo_server.RCON_password,
