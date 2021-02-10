@@ -10,12 +10,12 @@ from utils.server import WebServer
 from utils.csgo_server import CSGOServer
 
 __version__ = '1.7.1'
-#__dev__ = 572166692545888288
-__dev__ = 0
+__dev__ = 572166692545888288
+#__dev__ = 0
 
 class Discord_10man(commands.Bot):
     def __init__(self, config: dict, startup_extensions: List[str]):
-        super().__init__(command_prefix=commands.when_mentioned_or('.', '!'), case_insensitive=True, description='A bot to run CSGO PUGS.',
+        super().__init__(command_prefix=commands.when_mentioned_or('.', '!', ','), case_insensitive=True, description='A bot to run CSGO PUGS.',
                          help_command=commands.DefaultHelpCommand(verify_checks=False),
                          intents=discord.Intents(
                              guilds=True, members=True, bans=True, emojis=True, integrations=True, invites=True,
