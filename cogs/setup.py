@@ -38,7 +38,7 @@ class Setup(commands.Cog):
                         REPLACE INTO users (discord_id, steam_id)
                         VALUES( :discord_id, :steam_id )
                         ''', {"discord_id": str(ctx.author.id), "steam_id": str(steamID.as_steam2_zero)})
-        embed = discord.Embed(description=f'Connected {ctx.author.mention} \n `{steamID.as_steam2}`', color=0x00FF00)
+        embed = discord.Embed(description=f'Connected {ctx.author.mention} \n [{steamID.as_steam2}]({steamID_input})', color=0x00FF00)
         await ctx.send(embed=embed)
         #add another way to add roles for the users after login.    
         #await ctx.author.add_roles(ctx.guild.get_role(808304852676378624))
@@ -294,4 +294,4 @@ class Setup(commands.Cog):
             self.logger.exception(f'{ctx.command} caused an exception')
 
 def setup(client):
-    client.add_cog(Setup(client)
+    client.add_cog(Setup(client))

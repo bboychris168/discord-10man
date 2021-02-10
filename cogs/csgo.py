@@ -309,8 +309,8 @@ class CSGO(commands.Cog):
         if self.bot.bot_IP != '':
             bot_ip = self.bot.bot_IP
 
-        team1_country = 'AU'
-        team2_country = 'AU'
+        team1_country = 'IE'
+        team2_country = 'IE'
 
         team1_flags = []
         team2_flags = []
@@ -397,7 +397,7 @@ class CSGO(commands.Cog):
         embed = discord.Embed(description='Server is being configured', color=discord.Color.light_grey())
         loading_map_message = await ctx.send(embed=embed)
         valve.rcon.execute((server.server_address, server.server_port), server.RCON_password,
-                                           'sm_map de_office')
+                                           'sm_map de_cbble')
         await asyncio.sleep(10)
         get5_trigger = valve.rcon.execute((csgo_server.server_address, csgo_server.server_port),
                                           csgo_server.RCON_password,
@@ -648,7 +648,7 @@ class CSGO(commands.Cog):
             for ready_players in self.bot.queue_voice_channel.members:
                 players_ready.append(ready_players.mention)
 
-            embed.add_field(name='You have 60 seconds to ready up!', value='Ready: ✅', inline=False)
+            embed.add_field(name='You have 60 seconds to ready up!', value='Click on the emoji to ready up: ✅', inline=False)
             ready_up_message = await self.bot.queue_ctx.send(content=", ".join(players_ready), embed=embed)
             await ready_up_message.add_reaction('✅')
             self.ready_up.start(message=ready_up_message, members=self.bot.queue_voice_channel.members)
