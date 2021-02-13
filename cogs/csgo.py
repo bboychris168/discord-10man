@@ -630,6 +630,7 @@ class CSGO(commands.Cog):
                 error_message += f'<@{member.id}> '
             error_message += f'must connect their steam account with the command `{self.bot.command_prefix}link <Steam Profile URL>`'
             await self.bot.queue_ctx.send(error_message)
+            #await self.bot.queue_ctx.member.send(error_message)
             self.logger.debug('Members in the queue did not connect their account')
             self.logger.info(error_message)
 
