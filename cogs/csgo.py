@@ -792,7 +792,7 @@ class CSGO(commands.Cog):
                                       value=f'{server.team_names[1]}', inline=True)
                 gotv = server.get_gotv()
                 if gotv is None:
-                    score_embed.add_field(name=':tv:GOTV',
+                    score_embed.add_field(name='GOTV',
                                           value='Not Configured',
                                           inline=False)
                 else:

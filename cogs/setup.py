@@ -293,5 +293,6 @@ class Setup(commands.Cog):
         else:
             self.logger.exception(f'{ctx.command} caused an exception')
 
+
 def setup(client):
     client.add_cog(Setup(client))
