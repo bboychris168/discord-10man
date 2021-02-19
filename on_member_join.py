@@ -19,7 +19,7 @@ async def on_member_join(member):
     embed.add_field(name='Join our discord server', value='[Click here to play!](https://discord.gg/QAKb7sd3GY)', inline=True)
     await member.send(embed=embed)
     
-client.run('NTcyMTY2NjkyNTQ1ODg4Mjg4.XMYVwQ.rgmNoiQgtyBlTx75QpC8C6zGfWA')
+client.run('')
 
 
 
