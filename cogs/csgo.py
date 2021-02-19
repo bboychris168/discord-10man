@@ -251,7 +251,7 @@ class CSGO(commands.Cog):
                 player_veto_count += 1
 
         if map_arg is None:
-            message_text = 'Map Veto Loading'
+            message_text = '```Map Veto Loading....```'
         else:
             message_text = f'Map is `{map_arg}`'
         players_text = 'None'
@@ -270,14 +270,14 @@ class CSGO(commands.Cog):
 
         if ctx.author.voice.channel.category is None:
             team1_channel = await ctx.guild.create_voice_channel(name=f'team_{team1_captain.display_name}',
-                                                                 user_limit=int(self.bot.match_size / 2) + 1)
+                                                                 user_limit=int(self.bot.match_size / 2))
             team2_channel = await ctx.guild.create_voice_channel(name=f'team_{team2_captain.display_name}',
-                                                                 user_limit=int(self.bot.match_size / 2) + 1)
+                                                                 user_limit=int(self.bot.match_size / 2))
         else:
             team1_channel = await ctx.author.voice.channel.category.create_voice_channel(
-                name=f'team_{team1_captain.display_name}', user_limit=int(self.bot.match_size / 2) + 1)
+                name=f'team_{team1_captain.display_name}', user_limit=int(self.bot.match_size / 2))
             team2_channel = await ctx.author.voice.channel.category.create_voice_channel(
-                name=f'team_{team2_captain.display_name}', user_limit=int(self.bot.match_size / 2) + 1)
+                name=f'team_{team2_captain.display_name}', user_limit=int(self.bot.match_size / 2))
 
         for player in team1:
             await player.move_to(channel=team1_channel, reason=f'You are on {team1_captain}\'s Team')
@@ -372,13 +372,13 @@ class CSGO(commands.Cog):
             },
             'team1': {
                 'name': team1_name,
-                'tag': 'team1',
+                'tag': 'LINKED.GG',
                 'flag': team1_country,
                 'players': team1_steamIDs
             },
             'team2': {
                 'name': team2_name,
-                'tag': 'team2',
+                'tag': 'LINKED.GG',
                 'flag': team2_country,
                 'players': team2_steamIDs
             },
@@ -420,10 +420,10 @@ class CSGO(commands.Cog):
                     self.logger.warning(f'{player} was not sent the IP via DM')
         else:
             await ctx.send(embed=connect_embed)
-        score_embed = discord.Embed()
+        score_embed = discord.Embed('Match in Progress', color=discord.Color.green())
         score_embed.add_field(name='0', value=team1_name, inline=True)
         score_embed.add_field(name='0', value=team2_name, inline=True)
-        score_message = await ctx.send('Match in Progress', embed=score_embed)
+        score_message = await ctx.send(embed=score_embed)
 
         csgo_server.get_context(ctx=ctx, channels=[channel_original, team1_channel, team2_channel],
                                 players=team1 + team2, score_message=score_message)
@@ -486,7 +486,7 @@ class CSGO(commands.Cog):
         path = (await response.json())['path']
         chosen_map_image_url = base_url + path
         map_chosen_embed = discord.Embed(title=f'The chosen map is ```{chosen_map}```',
-                                         color=discord.Colour(0x650309))
+                                         color=discord.Colour.magenta())
         map_chosen_embed.set_image(url=chosen_map_image_url)
         await session.close()
 
@@ -628,9 +628,8 @@ class CSGO(commands.Cog):
             error_message = ''
             for member in not_connected_members:
                 error_message += f'<@{member.id}> '
-            error_message += f'must connect their steam account with the command `{self.bot.command_prefix}link <Steam Profile URL>`'
+            error_message += f'must connect their steam account with the command `{self.bot.command_prefix}login <Steam Profile URL>`'
             await self.bot.queue_ctx.send(error_message)
-            #await self.bot.queue_ctx.member.send(error_message)
             self.logger.debug('Members in the queue did not connect their account')
             self.logger.info(error_message)
 
@@ -644,11 +643,9 @@ class CSGO(commands.Cog):
                 self.bot.dev and len(self.bot.queue_voice_channel.members) >= 1)) and available:
             embed = discord.Embed(color=0x03f0fc)
             await self.bot.queue_ctx.channel.purge(limit=100)
-            
             players_ready = []
             for ready_players in self.bot.queue_voice_channel.members:
                 players_ready.append(ready_players.mention)
-
             embed.add_field(name='You have 60 seconds to ready up!', value='Click on the emoji to ready up: ✅', inline=False)
             ready_up_message = await self.bot.queue_ctx.send(content=", ".join(players_ready), embed=embed)
             await ready_up_message.add_reaction('✅')
