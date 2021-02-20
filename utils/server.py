@@ -152,6 +152,7 @@ class WebServer:
                         for player in server.players:
                             try:
                                 await player.move_to(channel=server.channels[0], reason=f'Game Over')
+                                #await player.move_to(channel=server.get_channel(812495880862171156), reason=f'Game Over')
                             except discord.HTTPException:
                                 traceback.print_exc()
                                 print(f'Unable to move {player}')

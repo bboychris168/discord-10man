@@ -420,7 +420,7 @@ class CSGO(commands.Cog):
                     self.logger.warning(f'{player} was not sent the IP via DM')
         else:
             await ctx.send(embed=connect_embed)
-        score_embed = discord.Embed('Match in Progress', color=discord.Color.green())
+        score_embed = discord.Embed(description='Match in Progress', color=discord.Color.green())
         score_embed.add_field(name='0', value=team1_name, inline=True)
         score_embed.add_field(name='0', value=team2_name, inline=True)
         score_message = await ctx.send(embed=score_embed)
