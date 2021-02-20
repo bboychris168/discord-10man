@@ -523,7 +523,7 @@ class CSGO(commands.Cog):
                 The current team captain
             '''
             embed = discord.Embed(title='__Map veto__',
-                                  color=discord.Colour(0x650309))
+                                  color=discord.Colour.magenta())
             response = await session.get(f'{base_url}/map-veto')
             path = (await response.json())['path']
             url = base_url + path
