@@ -91,12 +91,12 @@ class WebServer:
                                           value=f'{server.team_names[1]}', inline=True)
                     gotv = server.get_gotv()
                     if gotv is None:
-                        score_embed.add_field(name='GOTV',
-                                              value='Not Configured',
+                        score_embed.add_field(name=':tv:GOTV',
+                                              value='```Not Configured```',
                                               inline=False)
                     else:
-                        score_embed.add_field(name='GOTV',
-                                              value=f'connect {server.server_address}:{gotv}',
+                        score_embed.add_field(name=':tv:GOTV',
+                                              value=f'```connect {server.server_address}:{gotv}```',
                                               inline=False)
                     score_embed.set_footer(text="🟢 Live")
                     await server.score_message.edit(embed=score_embed)
@@ -104,19 +104,19 @@ class WebServer:
                 elif get5_event['event'] == 'round_end':
                     server.update_team_scores(
                         [get5_event["params"]["team1_score"], get5_event["params"]["team2_score"]])
-                    score_embed = discord.Embed()
+                    score_embed = discord.Embed(color=discord.Color.greyple())
                     score_embed.add_field(name=f'{get5_event["params"]["team1_score"]}',
                                           value=f'{server.team_names[0]}', inline=True)
                     score_embed.add_field(name=f'{get5_event["params"]["team2_score"]}',
                                           value=f'{server.team_names[1]}', inline=True)
                     gotv = server.get_gotv()
                     if gotv is None:
-                        score_embed.add_field(name='GOTV',
-                                              value='Not Configured',
+                        score_embed.add_field(name=':tv:GOTV',
+                                              value='```Not Configured```',
                                               inline=False)
                     else:
-                        score_embed.add_field(name='GOTV',
-                                              value=f'connect {server.server_address}:{gotv}',
+                        score_embed.add_field(name=':tv:GOTV',
+                                              value=f'```connect {server.server_address}:{gotv}```',
                                               inline=False)
                     score_embed.set_footer(text="🟢 Live")
                     await server.score_message.edit(embed=score_embed)
@@ -148,7 +148,7 @@ class WebServer:
                     else:
                         self.logger.error(f'Could not delete {get5_event["matchid"]}.json, file does not exist')
 
-                    if self.bot.cogs['CSGO'].pug.enabled:
+                    if not self.bot.cogs['CSGO'].pug.enabled:
                         for player in server.players:
                             try:
                                 await player.move_to(channel=server.channels[0], reason=f'Game Over')
