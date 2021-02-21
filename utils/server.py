@@ -125,8 +125,8 @@ class WebServer:
                     if get5_event['event'] == 'series_end':
                         series_end_embed = discord.Embed(description='Game Over', color=0xff0000)
                         await server.score_message.edit(embed=series_end_embed)
-                        valve.rcon.execute((csgo_server.server_address, csgo_server.server_port), csgo_server.RCON_password,
-                                        'sm_kick @all Match has Ended')
+                    valve.rcon.execute((csgo_server.server_address, csgo_server.server_port), csgo_server.RCON_password,
+                                    'sm_kick @all Match has Ended')
 
                     elif get5_event['event'] == 'series_cancel':
                         self.logger.info(f'ServerID={server.id} | Admin Cancelled Match')
