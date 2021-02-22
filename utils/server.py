@@ -84,7 +84,7 @@ class WebServer:
             if server is not None:
                 self.logger.debug(f'ServerID={server.id} ({request.remote})=\n {pprint.pformat(get5_event)}')
                 if get5_event['event'] == 'knife_start':
-                    score_embed = discord.Embed()
+                    score_embed = discord.Embed(color=discord.Color.greyple())
                     score_embed.add_field(name=f'0',
                                           value=f'{server.team_names[0]}', inline=True)
                     score_embed.add_field(name=f'0',
@@ -105,9 +105,9 @@ class WebServer:
                     server.update_team_scores(
                         [get5_event["params"]["team1_score"], get5_event["params"]["team2_score"]])
                     score_embed = discord.Embed(color=discord.Color.greyple())
-                    score_embed.add_field(name=f'{get5_event["params"]["team1_score"]}',
+                    score_embed.add_field(name=f'```{get5_event["params"]["team1_score"]}```',
                                           value=f'{server.team_names[0]}', inline=True)
-                    score_embed.add_field(name=f'{get5_event["params"]["team2_score"]}',
+                    score_embed.add_field(name=f'```{get5_event["params"]["team2_score"]}```',
                                           value=f'{server.team_names[1]}', inline=True)
                     gotv = server.get_gotv()
                     if gotv is None:
@@ -126,7 +126,7 @@ class WebServer:
                         series_end_embed = discord.Embed(description='Game Over', color=0xff0000)
                         await server.score_message.edit(embed=series_end_embed)
                         valve.rcon.execute((server.server_address, server.server_port), server.RCON_password,
-                                        'sm_kick @all Match has Ended')
+                                        'sm_kick @all LINKED.GG Match has Ended')
 
                     elif get5_event['event'] == 'series_cancel':
                         self.logger.info(f'ServerID={server.id} | Admin Cancelled Match')
@@ -134,7 +134,7 @@ class WebServer:
                         await server.score_message.edit(embed=series_cancelled_embed)
                         # Temporary fix, Get5 breaks on a series cancel unless map changes
                         valve.rcon.execute((server.server_address, server.server_port), server.RCON_password,
-                                           'sm_kick @all Admin Cancelled Match')
+                                           'sm_kick @all LINKED.GG Admin Cancelled Match')
                         valve.rcon.execute((server.server_address, server.server_port), server.RCON_password,
                                            'sm_map de_mirage')
 

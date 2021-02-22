@@ -15,7 +15,7 @@ class Utils(commands.Cog):
         self.logger.debug(f'Loaded {__name__}')
 
         self.bot: Discord_10man = bot
-        self.check_update.start()
+        #self.check_update.start()
 
     @commands.command(hidden=True)
     @commands.has_permissions(administrator=True)
@@ -72,7 +72,7 @@ class Utils(commands.Cog):
             self.logger.warning(f'{ctx.author} did not specify number of messages to delete.')
         self.logger.exception('clear command exception')
 
-    @tasks.loop(hours=24)
+    """ @tasks.loop(hours=24)
     async def check_update(self):
         self.logger.info('Checking for update.')
         session = aiohttp.ClientSession()
@@ -87,7 +87,7 @@ class Utils(commands.Cog):
                 embed.add_field(name='Download', value=f'{json["html_url"]}', inline=False)
                 owner: discord.Member = (await self.bot.application_info()).owner
                 await owner.send(embed=embed)
-        await session.close()
+        await session.close() """
 
     @commands.command(aliases=['version', 'v', 'a'], help='This command gets the bot information and version')
     async def about(self, ctx: commands.Context):
