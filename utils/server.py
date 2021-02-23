@@ -84,7 +84,7 @@ class WebServer:
             if server is not None:
                 self.logger.debug(f'ServerID={server.id} ({request.remote})=\n {pprint.pformat(get5_event)}')
                 if get5_event['event'] == 'knife_start':
-                    score_embed = discord.Embed(description=f'***{server.team_names[0]}***`KNIFE` | `KNIFE`***{server.team_names[1]}***',
+                    score_embed = discord.Embed(description=f'***{server.team_names[0]}*** `KNIFE` | `KNIFE` ***{server.team_names[1]}***',
                                                 color=discord.Color.red())
                     gotv = server.get_gotv()
                     if gotv is None:
@@ -95,14 +95,14 @@ class WebServer:
                         score_embed.add_field(name=':tv:GOTV',
                                               value=f'```connect {server.server_address}:{gotv}```',
                                               inline=False)
-                    score_embed.set_footer(text=":knife: Knife Round")
+                    score_embed.set_footer(text="🔪 Knife Round")
                     await server.score_message.edit(embed=score_embed)
 
                 elif get5_event['event'] == 'round_end':
                     server.update_team_scores(
                         [get5_event["params"]["team1_score"], get5_event["params"]["team2_score"]])
 
-                    score_embed = discord.Embed(description=f'***{server.team_names[0]}***`{get5_event["params"]["team1_score"]}` | `{get5_event["params"]["team2_score"]}`***{server.team_names[1]}***',
+                    score_embed = discord.Embed(description=f'***{server.team_names[0]}*** `{get5_event["params"]["team1_score"]}` | `{get5_event["params"]["team2_score"]}` ***{server.team_names[1]}***',
                                                 color=discord.Color.green())
                     gotv = server.get_gotv()
                     if gotv is None:
