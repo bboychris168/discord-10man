@@ -813,4 +813,3 @@ class CSGO(commands.Cog):
 def setup(client):
     veto_image_generator = VetoImage('images/map_images', 'images/x.png', 'png')
     client.add_cog(CSGO(client, veto_image_generator))
-    
