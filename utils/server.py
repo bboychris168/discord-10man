@@ -84,11 +84,7 @@ class WebServer:
             if server is not None:
                 self.logger.debug(f'ServerID={server.id} ({request.remote})=\n {pprint.pformat(get5_event)}')
                 if get5_event['event'] == 'knife_start':
-                    score_embed = discord.Embed(color=discord.Color.greyple())
-                    score_embed.add_field(name=f'0',
-                                          value=f'{server.team_names[0]}', inline=True)
-                    score_embed.add_field(name=f'0',
-                                          value=f'{server.team_names[1]}', inline=True)
+                    score_embed = discord.Embed(description=f'***{server.team_names[0]}***`KNIFE` | `KNIFE`***{server.team_names[1]}***' ,color=discord.Color.red())
                     gotv = server.get_gotv()
                     if gotv is None:
                         score_embed.add_field(name=':tv:GOTV',
@@ -98,17 +94,15 @@ class WebServer:
                         score_embed.add_field(name=':tv:GOTV',
                                               value=f'```connect {server.server_address}:{gotv}```',
                                               inline=False)
-                    score_embed.set_footer(text="🟢 Live")
+                    score_embed.set_footer(text=":knife: Knife Round")
                     await server.score_message.edit(embed=score_embed)
 
                 elif get5_event['event'] == 'round_end':
                     server.update_team_scores(
                         [get5_event["params"]["team1_score"], get5_event["params"]["team2_score"]])
-                    score_embed = discord.Embed(color=discord.Color.greyple())
-                    score_embed.add_field(name=f'```{get5_event["params"]["team1_score"]}```',
-                                          value=f'{server.team_names[0]}', inline=True)
-                    score_embed.add_field(name=f'```{get5_event["params"]["team2_score"]}```',
-                                          value=f'{server.team_names[1]}', inline=True)
+
+                    score_embed = discord.Embed(description=f'***{server.team_names[0]}***`{get5_event["params"]["team1_score"]}` | `{get5_event["params"]["team2_score"]}`***{server.team_names[1]}***',
+                                                color=discord.Color.green())
                     gotv = server.get_gotv()
                     if gotv is None:
                         score_embed.add_field(name=':tv:GOTV',
@@ -125,8 +119,6 @@ class WebServer:
                     if get5_event['event'] == 'series_end':
                         series_end_embed = discord.Embed(description='Game Over', color=0xff0000)
                         await server.score_message.edit(embed=series_end_embed)
-                        valve.rcon.execute((server.server_address, server.server_port), server.RCON_password,
-                                        'sm_kick @all LINKED.GG Match has Ended')
 
                     elif get5_event['event'] == 'series_cancel':
                         self.logger.info(f'ServerID={server.id} | Admin Cancelled Match')
@@ -141,14 +133,16 @@ class WebServer:
                     score_embed: discord.Embed = server.score_message.embeds[0]
                     score_embed.set_footer(text='🟥 Ended')
                     await server.score_message.edit(embed=score_embed)
+                    valve.rcon.execute((server.server_address, server.server_port), server.RCON_password,
+                                            'sm_kick @all LINKED.GG Match has Ended')
 
                     if os.path.exists(f'./{get5_event["matchid"]}.json'):
                         os.remove(f'./{get5_event["matchid"]}.json')
                         self.logger.debug(f'Deleted {get5_event["matchid"]}.json')
                     else:
                         self.logger.error(f'Could not delete {get5_event["matchid"]}.json, file does not exist')
-
-                    if not self.bot.cogs['CSGO'].pug.enabled:
+                    #TODO: line below if not statement to move players into a channel using !setup_queue command. 
+                    if self.bot.cogs['CSGO'].pug.enabled:  
                         for player in server.players:
                             try:
                                 await player.move_to(channel=server.channels[0], reason=f'Game Over')

@@ -654,7 +654,7 @@ class CSGO(commands.Cog):
             self.queue_check.stop()
             self.logger.debug(f'Unready users {self.bot.users_not_ready}')
 
-    @tasks.loop(seconds=5.0, count=60)
+    @tasks.loop(seconds=1.0, count=60)
     async def ready_up(self, message: discord.Message, members: List[discord.Member]):
         message = await self.bot.queue_ctx.fetch_message(message.id)
 
