@@ -84,7 +84,8 @@ class WebServer:
             if server is not None:
                 self.logger.debug(f'ServerID={server.id} ({request.remote})=\n {pprint.pformat(get5_event)}')
                 if get5_event['event'] == 'knife_start':
-                    score_embed = discord.Embed(description=f'***{server.team_names[0]}***`KNIFE` | `KNIFE`***{server.team_names[1]}***' ,color=discord.Color.red())
+                    score_embed = discord.Embed(description=f'***{server.team_names[0]}***`KNIFE` | `KNIFE`***{server.team_names[1]}***',
+                                                color=discord.Color.red())
                     gotv = server.get_gotv()
                     if gotv is None:
                         score_embed.add_field(name=':tv:GOTV',
