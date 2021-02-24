@@ -134,6 +134,7 @@ class WebServer:
                     score_embed: discord.Embed = server.score_message.embeds[0]
                     score_embed.set_footer(text='🟥 Ended')
                     await server.score_message.edit(embed=score_embed)
+                    await asyncio.sleep(20)
                     valve.rcon.execute((server.server_address, server.server_port), server.RCON_password,
                                             'sm_kick @all LINKED.GG Match has Ended')
 
