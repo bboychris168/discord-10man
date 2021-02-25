@@ -118,7 +118,7 @@ class WebServer:
 
                 if get5_event['event'] == 'series_end' or get5_event['event'] == 'series_cancel' or get5_event['event'] == 'map_end':
                     if get5_event['event'] == 'series_end':
-                        series_end_embed = discord.Embed(description='Game Over', color=0xff0000)
+                        series_end_embed = discord.Embed(description='Match Ended', color=0xff0000)
                         await server.score_message.edit(embed=series_end_embed)
 
                     elif get5_event['event'] == 'series_cancel':
@@ -134,7 +134,6 @@ class WebServer:
                     score_embed: discord.Embed = server.score_message.embeds[0]
                     score_embed.set_footer(text='🟥 Ended')
                     await server.score_message.edit(embed=score_embed)
-                    await asyncio.sleep(20)
                     valve.rcon.execute((server.server_address, server.server_port), server.RCON_password,
                                             'sm_kick @all LINKED.GG Match has Ended')
 
