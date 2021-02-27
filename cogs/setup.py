@@ -295,3 +295,4 @@ class Setup(commands.Cog):
 
 def setup(client):
     client.add_cog(Setup(client))
+    

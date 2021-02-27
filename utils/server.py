@@ -132,6 +132,7 @@ class WebServer:
                                            'sm_map de_mirage')
 
                     score_embed: discord.Embed = server.score_message.embeds[0]
+                    score_embed.discord.Embed(color=discord.Color.red())
                     score_embed.set_footer(text='🟥 Ended')
                     await server.score_message.edit(embed=score_embed)
                     valve.rcon.execute((server.server_address, server.server_port), server.RCON_password,
