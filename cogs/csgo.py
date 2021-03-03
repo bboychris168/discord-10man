@@ -739,11 +739,11 @@ class CSGO(commands.Cog):
                         inline=False)
         embed.add_field(name='Players', value=f'{info["player_count"]}/{info["max_players"]}', inline=True)
         embed.add_field(name='Map', value=info['map'], inline=True)
-        gotv = csgo_server.get_gotv()
+        """ gotv = csgo_server.get_gotv()
         if gotv is not None:
             embed.add_field(name=':tv:GOTV',
                             value=f'```connect {csgo_server.server_address}:{gotv}```',
-                            inline=False)
+                            inline=False) """
         return embed
 
     @commands.command(aliases=['maps'], help='Resets the map pool to be whatever maps are specified'
