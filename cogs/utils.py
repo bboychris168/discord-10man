@@ -113,6 +113,10 @@ class Utils(commands.Cog):
         except (discord.HTTPException, discord.Forbidden):
             self.logger.error(f'Could not send {member} a PM')
 
+    """ @commands.Cog.listener()
+    async def on_guild_join(guild):
+        https://stackoverflow.com/questions/62654731/discord-py-on-guild-join-event
+     """
 
 def setup(client):
     client.add_cog(Utils(client))

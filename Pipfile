@@ -17,6 +17,7 @@ cchardet = "*"
 aiodns = "*"
 databases = {extras = ["sqlite"], version = "*"}
 unidecode = "*"
+requests = "*"
 
 [requires]
 python_version = "3.8"
