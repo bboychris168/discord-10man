@@ -680,7 +680,7 @@ class CSGO(commands.Cog):
             self.readied_up = True
             self.ready_up.stop()
             requests.post('https://dathost.net/api/0.1/game-servers/60630fd115fcf639ff8aa826/start',
-                        auth=('chris.168@live.com.au', 'clear123'))
+                        auth=('saoidhasoudhasuodhasuodhaousd', 'sadpasjdapisdjaispda'))
 
     @ready_up.after_loop
     async def ready_up_cancel(self):
