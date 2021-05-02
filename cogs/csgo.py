@@ -398,7 +398,7 @@ class CSGO(commands.Cog):
         embed = discord.Embed(description='Server is being configured', color=discord.Color.light_grey())
         loading_map_message = await ctx.send(embed=embed)
         valve.rcon.execute((server.server_address, server.server_port), server.RCON_password,
-                                           'sm_map de_cbble')
+                                        'sm_map de_cbble')
 
         await asyncio.sleep(10)
         get5_trigger = valve.rcon.execute((csgo_server.server_address, csgo_server.server_port),
@@ -679,8 +679,8 @@ class CSGO(commands.Cog):
         if ready:
             self.readied_up = True
             self.ready_up.stop()
-            requests.post('https://dathost.net/api/0.1/game-servers/60630fd115fcf639ff8aa826/start',
-                        auth=('saoidhasoudhasuodhasuodhaousd', 'sadpasjdapisdjaispda'))
+            requests.post('https://dathost.net/api/0.1/game-servers/5f58ca3fc846ace49659c913/start',
+                        auth=('chris.168@live.com.au', 'clear123'))
 
     @ready_up.after_loop
     async def ready_up_cancel(self):

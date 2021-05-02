@@ -142,12 +142,12 @@ class WebServer:
                         self.logger.debug(f'Deleted {get5_event["matchid"]}.json')
                     else:
                         self.logger.error(f'Could not delete {get5_event["matchid"]}.json, file does not exist')
-                    #TODO: line below if not statement to move players into a channel using !setup_queue command. 
-                    if self.bot.cogs['CSGO'].pug.enabled:  
+                    #TODO: line below use 'if not' statement to move players into a channel using !setup_queue command. 
+                    if not self.bot.cogs['CSGO'].pug.enabled:  
                         for player in server.players:
                             try:
                                 await player.move_to(channel=server.channels[0], reason=f'Game Over')
-                                #await player.move_to(channel=server.get_channel(812495880862171156), reason=f'Game Over')
+                                #await player.move_to(channel=832660533765341215, reason=f'Game Over')
                             except discord.HTTPException:
                                 traceback.print_exc()
                                 print(f'Unable to move {player}')
