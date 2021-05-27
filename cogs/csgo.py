@@ -10,6 +10,7 @@ import traceback
 import valve.rcon
 import valve.source.a2s
 import requests
+import dathost_config
 
 from bot import Discord_10man
 from collections import Counter
@@ -679,8 +680,8 @@ class CSGO(commands.Cog):
         if ready:
             self.readied_up = True
             self.ready_up.stop()
-            requests.post('https://dathost.net/api/0.1/game-servers/5f58ca3fc846ace49659c913/start',
-                        auth=('apsjdpiasjdipajsipdjsd', 'OASHDUOAHSDUA'))
+            requests.post(f'https://dathost.net/api/0.1/game-servers/{dathost_config.dathost_server}/start',
+                        auth=(f'{dathost_config.dathost_username}', f'{dathost_config.dathost_password}'))
 
     @ready_up.after_loop
     async def ready_up_cancel(self):

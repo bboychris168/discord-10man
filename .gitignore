@@ -6,6 +6,7 @@ result.png
 
 # Config Files
 config.json
+dathost_config.py
 
 # Logs
 bot.log
